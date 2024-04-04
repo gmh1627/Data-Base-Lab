@@ -1,0 +1,130 @@
+\documentclass{ctexart}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{xunicode-addon}
+\usepackage{booktabs}
+\usepackage[a4paper,hmargin=1.25in,vmargin=1in]{geometry}
+% !TeX program = xelatex
+\title{\begin{figure}[H]
+	\centering 
+	\includegraphics[height=7cm,width=14cm]{E:/Pictures/中科大.jpg}
+	\end{figure}\Huge\textbf{Lab 1}\\\huge{SQL 练习}}
+\date{}
+\punctstyle{banjiao} 
+\pagestyle{fancy}
+	\fancyhead[C]{\LARGE\textbf{Lab 1}}
+	\fancyhead[L]{}
+	\fancyhead[R]{}
+	\fancyfoot[C]{\thepage}
+\begin{document}
+	\maketitle
+	\thispagestyle{empty}
+	
+	\[\makebox{\Large{姓名：\underline{\makebox[5cm]{高茂航}}}}\]
+	
+    \[\makebox{\Large{学号：\underline{\makebox[5cm]{PB22061161}}}}\]
+	
+	$$\makebox{\Large{日期：\underline{\makebox[5cm]{2024.4.20}}}}$$
+	
+	\clearpage
+
+	\pagenumbering{arabic}
+%\section{Results}
+设有如下关系模式：
+Student(SNO, NAME, GENDER, BIRTHDAY, DEPART)
+SNO 为学生学号， DEPART 为系别
+Teacher(TNO,NAME,GENDER,BIRTHDAY,POSITION,DEPART)
+TNO 为教师工号， POSITION 为职称， DEPART 为系别。
+Course(CNO, NAME, TYPE, TNO)
+CNO 为课程编号， TYPE 为课程类型， 1 表示必修课， 0 表示选修课， TNO 为教师工号。
+Score(SNO, CNO, DEGREE)
+SNO 为学生学号， CNO 为课程编号， DEGREE 为成绩。
+PS:加下划线"\_\_"的表示该字段为主键。
+\section{任务一}
+根据所给 Student.csv、 Teacher.csv、 Course.csv、 Score.csv 表中的数据信息，在数
+据库中创建对应的关系表并将数据录入到数据库中。可能涉及到的数据类型： varchar, char,
+int, float ,datetime。
+（也需要截图展示！ ）
+
+\section{任务二：实现以下各题功能的 SQL 语句(部分题目的结果受前面题目影响)}
+
+\subsection{修改基本表}
+\subsubsection{在学生表 student 中增加一个新的属性列 AGE(年龄)，类型为 int}
+\subsubsection{计算每个学生的年龄(AGE，即当前年份减去出生年份)}
+注意，此操作可能需要关闭安全更新模式；提示，可使用 MySQL 的 YEAR 函数。
+\subsubsection{为每个学生的年龄加 2， 将 AGE（年龄）的数据类型由 int 改为 char}
+\subsubsection{删除属性列 AGE}
+\subsubsection{创建一个教师课程数量表： teacher\_course(TNO,NUM\_COURSE)，两个属性分别表示授课教师工号，课程数量， 其中 TNO 是主键}
+\subsubsection{用一条语句，结合表 course 记录，为表 teacher 中所有教师，在表 teacher\_course 添加对应记录（用到查询，而不是手动数 NUM 插入； 若是表 course 中未出现的教师，则课程数量记为 NULL）}
+\subsubsection{删除表 teacher\_course 中含有 NULL 的记录}
+\subsubsection{删除表 teacher\_course}
+\subsubsection{在学生表 student 、成绩表 score 中分别插入一些数据，数据如下(注意: 如果与原有数
+据冲突，比如学号重复，请修改一下自己的信息保证能够插入)：}
+请保证选择的三门课成绩不一样。
+\subsubsection{在 score 表中删除你所选的课程中成绩最低的一门课程的记录（可能会用到子查询）}
+\subsection{索引}
+\subsubsection{用 create 语句在 course 表的名称 NAME 上建立普通索引 NAME\_INDEX}
+\subsubsection{用 create 语句在 teacher 表的工号 TNO 上建立唯一索引 TNO\_INDEX}
+\subsubsection{用 create 语 句 在 score 表 上 的 学 号 SNO 、 成 绩 DEGREE 上 建 立 复 合 索引RECORD\_INDEX， 要求学号为降序，学号相同时成绩为升序}
+\subsubsection{用一条语句查询表 score 的索引}
+\subsubsection{删除 teacher 表字段 TNO 上的索引 TNO\_INDEX}
+\subsection{查询}
+注：以下每道题限制用一条 SQL 语句完成
+\subsubsection{查询和你属于同一个系的学生学号和姓名(包括你本人)}
+\subsubsection{查询和你属于同一个系的学生学号和姓名(不包括你本人)}
+\subsubsection{查询和你的某个好友属于同一个系的学生学号和姓名（9 题插入的某个好友）}
+\subsubsection{查询和你的两个好友都不在一个系的学生学号和姓名（9 题插入的两个好友）}
+\subsubsection{查询教过你的所有老师的工号和姓名}
+\subsubsection{查询 11 系和 229 系教师的总人数}
+\subsubsection{查询你的系中年龄（即当前年份减去出生年份） 最大的学生的学号、姓名和年龄}
+\subsubsection{查询你的系中年龄（即当前年份减去出生年份） 最小的学生的学号、姓名和年龄}
+\subsubsection{查询选修 DB\_Design 课程且成绩在 75 分以下（不包括 75） 的学生的学号、姓名和分数}
+\subsubsection{查询选修过“ZDH”老师课程的学生学号和姓名（去掉重复行）}
+\subsubsection{查询选过某课程的学生学号和分数，并按分数降序展示}
+（某课程是指 course 表中的某一课程名 NAME，你自行选择； 分数指的是选的这门课的成绩，不包括选这门课的同学的其他
+成绩）。
+\subsubsection{查询每门课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}
+\subsubsection{查询每门必修课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}
+\subsubsection{查询至少选修了 ZDH 老师（TNO=”TA90023”）开设的所有课程的学生学号}
+\subsubsection{查询每门课程的最高分和最低分，并计算其分数差。其中每行包含课程号、课程名和最高分、最低分和分数差（课程无成绩的不用包括）}
+\subsubsection{查询存在考试成绩低于 75 分的学生学号，以及低于 75 分的课程数量}
+\subsubsection{查询所教过的课程中有学生考试成绩低于 75 分的教师的工号和姓名（去掉重复行）}
+\subsubsection{查询选修少于 2 门课程的学生的学号、姓名}
+\subsubsection{查询至少选修了 YH 同学(SNO=”PB210000001”)所选全部课程的学生学号}
+\subsubsection{查询 Course 表中各个课程名称与相应的平均成绩（没有选课的学生平均成绩为 NULL） }
+\subsubsection{查询每个系的学生人数和每个系的平均分，其中每行包含系号、系的人数和平均成绩}
+（计算人数的时候需要包括那些没有成绩的同学，但是计算成绩的时候不需要包括这些同学）
+\subsubsection{查询所有未选修 DB\_Design 课程或者 Data\_Mining 课程的学生的学生姓名（去掉重复行）}
+\subsubsection{查询各个课程的课程名及选该课的学生的最小年龄、最大年龄和平均年龄。（包括没有人选
+的课）}
+\subsubsection{查询选修了课程名中包含”Computer”课程的学生的学号和姓名}
+\subsubsection{设课程平均成绩为 x，查询各个课程成绩处于[x-12, x+12]区间的同学的成绩表，即包含 SNO、CNO、 DEGREE}
+\subsection{视图}
+\subsubsection{建立 229 系的学生视图（db\_22\_student），属性与 student 表一样，并要求对该视图进行修改和插入操作时仍需保证该视图只有 229 系的学生}
+\subsubsection{将 229 系学生视图（db\_229\_student）中学号为“PB210000020”的学生姓名改为{你的姓名（英文首字母）}}
+\subsubsection{在 229 系学生视图（db\_229\_student）中找出年龄小于 22 岁的学生，包含 SNO、 NAME}
+\subsubsection{向 student 表中插入一名“学号 SA210110021，姓名 QXY，性别女，生日 2007/7/27， 229系”的学生。然后查询视图 db\_229\_student 的所有学生，验证其是否更新}
+\subsubsection{向视图 db\_229\_student 中插入一名“学号 SA210110023，姓名 DPC，性别男，生日1997/4/27， 11 系”的学生，观察到了什么现象}
+\subsubsection{删除视图 db\_229\_student}
+\subsection{触发器}
+\subsubsection{创建关系表： teacher\_salary(TNO, SAL)，其中 TNO 是教师工号（主键）， SAL 是教师工资（类型 float）}
+\subsubsection{定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定义完整性规则： “表中出现的工号必须也出现在 teacher 表中，否则报错”。}
+注：该规则实际上就是外键约束； MySQL 中
+可使用 SIGNAL 抛出错误；需要为 INSERT 和 UPDATE 分别定义触发器。请展示出成功创建
+触发器和测试抛出错误信息的截图。
+\subsubsection{定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定 义 完 整 性 规 则 ：
+“Instructor/Associate Professor/Professor 的工资不能低于 4000/7000/10000，且不能高于
+7000/10000/13000，如果低于，则改为 4000/7000/10000”，如果高于，则改为 7000/10000/13000}
+注：需要为 INSERT 和 UPDATE 分别定义触发器。并检验触发器是否工作：为 teacher\_salary构造 INSERT 和 UPDATE 语句并激活所定义过的触发器，将过程截图展示
+\subsubsection{删除刚刚创建的所有触发器}
+\subsection{空值}
+\subsubsection{将 score 表中的 Data\_Mining 课程成绩设为空值，然后在 score 表查询学生学号和分数，并按分数升序展示。观察 NULL 在 MySQL 中的大小是怎样的}
+\subsection{开放题}
+\subsubsection{}
+\subsubsection{}
+
+	\section{Conclusion}
+    \end{document}

@@ -1,0 +1,65 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {1}任务一}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}任务二：实现以下各题功能的 SQL 语句(部分题目的结果受前面题目影响)}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}修改基本表}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.1}在学生表 student 中增加一个新的属性列 AGE(年龄)，类型为 int}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.2}计算每个学生的年龄(AGE，即当前年份减去出生年份)}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.3}为每个学生的年龄加 2， 将 AGE（年龄）的数据类型由 int 改为 char}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.4}删除属性列 AGE}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.5}创建一个教师课程数量表： teacher\_course(TNO,NUM\_COURSE)，两个属性分别表示授课教师工号，课程数量， 其中 TNO 是主键}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.6}用一条语句，结合表 course 记录，为表 teacher 中所有教师，在表 teacher\_course 添加对应记录（用到查询，而不是手动数 NUM 插入； 若是表 course 中未出现的教师，则课程数量记为 NULL）}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.7}删除表 teacher\_course 中含有 NULL 的记录}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.8}删除表 teacher\_course}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.9}在学生表 student 、成绩表 score 中分别插入一些数据，数据如下(注意: 如果与原有数 据冲突，比如学号重复，请修改一下自己的信息保证能够插入)：}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.10}在 score 表中删除你所选的课程中成绩最低的一门课程的记录（可能会用到子查询）}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}索引}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}用 create 语句在 course 表的名称 NAME 上建立普通索引 NAME\_INDEX}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}用 create 语句在 teacher 表的工号 TNO 上建立唯一索引 TNO\_INDEX}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.3}用 create 语 句 在 score 表 上 的 学 号 SNO 、 成 绩 DEGREE 上 建 立 复 合 索引RECORD\_INDEX， 要求学号为降序，学号相同时成绩为升序}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.4}用一条语句查询表 score 的索引}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.5}删除 teacher 表字段 TNO 上的索引 TNO\_INDEX}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}查询}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}查询和你属于同一个系的学生学号和姓名(包括你本人)}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}查询和你属于同一个系的学生学号和姓名(不包括你本人)}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}查询和你的某个好友属于同一个系的学生学号和姓名（9 题插入的某个好友）}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.4}查询和你的两个好友都不在一个系的学生学号和姓名（9 题插入的两个好友）}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.5}查询教过你的所有老师的工号和姓名}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.6}查询 11 系和 229 系教师的总人数}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.7}查询你的系中年龄（即当前年份减去出生年份） 最大的学生的学号、姓名和年龄}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.8}查询你的系中年龄（即当前年份减去出生年份） 最小的学生的学号、姓名和年龄}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.9}查询选修 DB\_Design 课程且成绩在 75 分以下（不包括 75） 的学生的学号、姓名和分数}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.10}查询选修过“ZDH”老师课程的学生学号和姓名（去掉重复行）}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.11}查询选过某课程的学生学号和分数，并按分数降序展示}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.12}查询每门课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.13}查询每门必修课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.14}查询至少选修了 ZDH 老师（TNO=”TA90023”）开设的所有课程的学生学号}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.15}查询每门课程的最高分和最低分，并计算其分数差。其中每行包含课程号、课程名和最高分、最低分和分数差（课程无成绩的不用包括）}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.16}查询存在考试成绩低于 75 分的学生学号，以及低于 75 分的课程数量}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.17}查询所教过的课程中有学生考试成绩低于 75 分的教师的工号和姓名（去掉重复行）}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.18}查询选修少于 2 门课程的学生的学号、姓名}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.19}查询至少选修了 YH 同学(SNO=”PB210000001”)所选全部课程的学生学号}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.20}查询 Course 表中各个课程名称与相应的平均成绩（没有选课的学生平均成绩为 NULL） }{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.21}查询每个系的学生人数和每个系的平均分，其中每行包含系号、系的人数和平均成绩}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.22}查询所有未选修 DB\_Design 课程或者 Data\_Mining 课程的学生的学生姓名（去掉重复行）}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.23}查询各个课程的课程名及选该课的学生的最小年龄、最大年龄和平均年龄。（包括没有人选 的课）}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.24}查询选修了课程名中包含”Computer”课程的学生的学号和姓名}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.25}设课程平均成绩为 x，查询各个课程成绩处于[x-12, x+12]区间的同学的成绩表，即包含 SNO、CNO、 DEGREE}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}视图}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.1}建立 229 系的学生视图（db\_22\_student），属性与 student 表一样，并要求对该视图进行修改和插入操作时仍需保证该视图只有 229 系的学生}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.2}将 229 系学生视图（db\_229\_student）中学号为“PB210000020”的学生姓名改为{你的姓名（英文首字母）}}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.3}在 229 系学生视图（db\_229\_student）中找出年龄小于 22 岁的学生，包含 SNO、 NAME}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.4}向 student 表中插入一名“学号 SA210110021，姓名 QXY，性别女，生日 2007/7/27， 229系”的学生。然后查询视图 db\_229\_student 的所有学生，验证其是否更新}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.5}向视图 db\_229\_student 中插入一名“学号 SA210110023，姓名 DPC，性别男，生日1997/4/27， 11 系”的学生，观察到了什么现象}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.6}删除视图 db\_229\_student}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}触发器}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}创建关系表： teacher\_salary(TNO, SAL)，其中 TNO 是教师工号（主键）， SAL 是教师工资（类型 float）}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定义完整性规则： “表中出现的工号必须也出现在 teacher 表中，否则报错”。}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.3}定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定 义 完 整 性 规 则 ： “Instructor/Associate Professor/Professor 的工资不能低于 4000/7000/10000，且不能高于 7000/10000/13000，如果低于，则改为 4000/7000/10000”，如果高于，则改为 7000/10000/13000}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.4}删除刚刚创建的所有触发器}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}空值}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.6.1}将 score 表中的 Data\_Mining 课程成绩设为空值，然后在 score 表查询学生学号和分数，并按分数升序展示。观察 NULL 在 MySQL 中的大小是怎样的}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}开放题}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.1}}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.2}}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Conclusion}{5}{}\protected@file@percent }
+\gdef \@abspage@last{6}
