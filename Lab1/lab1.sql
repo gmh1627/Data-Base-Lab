@@ -271,22 +271,22 @@ show index from teacher;
 
 -- 查询
 -- 16
-select Sno,NAME
+select Sno, NAME
 from student
 where DEPART='229';
 
 -- 17
-select Sno,NAME
+select Sno, NAME
 from student
 where DEPART='229' and NAME!='GMH';
 
 -- 18
-select Sno,NAME
+select Sno, NAME
 from student
 where DEPART='11';
 
 -- 19
-select Sno,NAME
+select Sno, NAME
 from student
 where DEPART!='11' and DEPART!='229';
 
@@ -345,7 +345,7 @@ group by score.CNO;
 select distinct score.CNO, course.NAME, avg(score.DEGREE) as ave_degree
 from score, course
 where score.CNO=course.CNO and course.TYPE=1
-group by score.CNO, course.NAME;
+group by score.CNO;
 
 -- 29
 select distinct student.SNO, student.NAME
@@ -491,9 +491,8 @@ drop view db_229_student;
 -- 47
 create table teacher_sal
 	(TNO char(7) primary key,  
-	 SAL float,
-     foreign key(TNO) references teacher(TNO)
-	);  
+	 SAL float
+	);
 select * from teacher_sal;
 
 -- 48
@@ -502,7 +501,7 @@ create trigger insert_sal
 before insert on teacher_sal
 for each row
 begin
-	declare TNO_num char(7);
+	declare TNO_num int;
 	select count(*) into TNO_num
     from teacher
     where TNO = new.TNO;
@@ -515,12 +514,21 @@ end;
 //
 DELIMITER ;
 
+show create trigger insert_sal;
+
+insert into teacher_sal (TNO, SAL)
+values
+('TA90021', 6000.4);
+insert into teacher_sal (TNO, SAL)
+values
+('TA12345', 4900.2);
+
 DELIMITER //
 create trigger update_sal
 before update on teacher_sal
 for each row
 begin
-	declare TNO_num char(7);
+	declare TNO_num int;
 	select count(*) into TNO_num
     from teacher
     where TNO = new.TNO;
@@ -532,6 +540,12 @@ begin
 end;
 //
 DELIMITER ;
+
+show create trigger update_sal;
+
+update teacher_sal 
+set TNO = 'TA12345'
+where TNO = 'TA90021';
 
 -- 49
 DELIMITER //
@@ -541,24 +555,38 @@ for each row
 begin
 	declare pos varchar(30);
     select POSITION into pos
-    from teacher;
+    from teacher
+    where teacher.TNO = NEW.TNO;
  
 	if new.SAL < 4000 and pos = 'Instructor' then
 		set new.SAL = 4000;
-	elseif new.sal < 7000 and position_salary = 'Associate professor' then
+	elseif new.sal < 7000 and pos = 'Associate professor' then
         set new.sal = 7000;
-    elseif new.sal < 10000 and position_salary = 'Professor' then
+    elseif new.sal < 10000 and pos = 'Professor' then
         set new.sal = 10000;
-    elseif new.sal > 7000 and position_salary = 'Instructor' then
+    elseif new.sal > 7000 and pos = 'Instructor' then
         set new.sal = 7000;
-    elseif new.sal > 10000 and position_salary = 'Associate professor' then
+    elseif new.sal > 10000 and pos = 'Associate professor' then
         set new.sal = 10000;
-    elseif new.sal > 13000 and position_salary = 'Professor' then
-        set new.sal = 1300;
+    elseif new.sal > 13000 and pos = 'Professor' then
+        set new.sal = 13000;
     end if;
 end;
 //
 DELIMITER ;
+
+show create trigger update_sal;
+
+insert into teacher_sal (TNO, SAL)
+values
+('TA90022', 6500.4),
+('TA90025', 9500.4),
+('TA90023', 3500.4),
+('TA90028', 7500.4),
+('TA90031', 10500.4),
+('TA90030', 13500.4);
+
+select * from teacher_sal;
 
 DELIMITER //
 create trigger update2_sal
@@ -567,27 +595,82 @@ for each row
 begin
 	declare pos varchar(30);
     select POSITION into pos
-    from teacher;
+    from teacher
+    where teacher.TNO = NEW.TNO;
  
 	if new.SAL < 4000 and pos = 'Instructor' then
 		set new.SAL = 4000;
-	elseif new.sal < 7000 and position_salary = 'Associate professor' then
+	elseif new.sal < 7000 and pos = 'Associate professor' then
         set new.sal = 7000;
-    elseif new.sal < 10000 and position_salary = 'Professor' then
+    elseif new.sal < 10000 and pos = 'Professor' then
         set new.sal = 10000;
-    elseif new.sal > 7000 and position_salary = 'Instructor' then
+    elseif new.sal > 7000 and pos = 'Instructor' then
         set new.sal = 7000;
-    elseif new.sal > 10000 and position_salary = 'Associate professor' then
+    elseif new.sal > 10000 and pos = 'Associate professor' then
         set new.sal = 10000;
-    elseif new.sal > 13000 and position_salary = 'Professor' then
-        set new.sal = 1300;
+    elseif new.sal > 13000 and pos = 'Professor' then
+        set new.sal = 13000;
     end if;
 end;
 //
 DELIMITER ;
 
+update teacher_sal
+set SAl = '6500'
+where TNO = 'TA90022';
+
+update teacher_sal
+set SAl = '9500'
+where TNO = 'TA90025';
+
+update teacher_sal
+set SAl = '7500'
+where TNO = 'TA90028';
+
+update teacher_sal
+set SAl = '3500'
+where TNO = 'TA90023';
+
+update teacher_sal
+set SAl = '10500'
+where TNO = 'TA90031';
+
+update teacher_sal
+set SAl = '13500'
+where TNO = 'TA90030';
+
+select * from teacher_sal;
+
 -- 50
 drop trigger insert_sal;
 drop trigger update_sal;
 drop trigger insert2_sal;
-drop trigger insert2_sal;
+drop trigger update2_sal;
+
+-- 51
+update score
+set DEGREE = NULL
+where CNO in
+	(select CNO
+     from Course
+     where NAME = 'Data_Mining'
+	);
+    
+select SNO, DEGREE 
+from score
+order by DEGREE;
+-- 52
+-- 查询每个学生的选课数量
+select student.SNO, student.NAME, count(*) as num
+from student, score
+where student.SNO = score.Sno
+group by score.Sno;
+
+-- 53
+-- 查询没有选GMH选过的任意一门课的学生名字
+select distinct NAME  
+from student, score 
+where student.SNO = score.Sno and score.CNO not in
+									(select CNO
+									 from student student1, score score1
+									 where student1.NAME = 'GMH' and student1.Sno = score1.Sno);

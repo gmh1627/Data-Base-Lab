@@ -225,11 +225,11 @@ select * from score;
 		\end{figure}
 		\begin{figure}[H]
 			\centering 
-			\includegraphics[height=3.5cm,width=6cm]{3.png}
+			\includegraphics[height=4cm,width=8cm]{3.png}
 			\end{figure}
 			\begin{figure}[H]
 				\centering 
-				\includegraphics[height=3cm,width=6cm]{4.png}
+				\includegraphics[height=4cm,width=6cm]{4.png}
 				\end{figure}
 				\begin{figure}[H]
 					\centering 
@@ -237,7 +237,7 @@ select * from score;
 					\end{figure}
 					\begin{figure}[H]
 						\centering 
-						\includegraphics[height=9cm,width=6cm]{6.png}
+						\includegraphics[height=10cm,width=6cm]{6.png}
 						\end{figure}
 \section{任务二：实现以下各题功能的 SQL 语句}
 
@@ -254,7 +254,7 @@ select AGE from student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{7.png}
+	\includegraphics[height=8cm,width=1cm]{7.png}
 	\end{figure}
 \subsubsection{为每个学生的年龄加2， 将 AGE的数据类型由int改为char}
 \begin{lstlisting}[language=sql]
@@ -265,11 +265,11 @@ select AGE from student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{8.png}
+	\includegraphics[height=8cm,width=1cm]{8.png}
 	\end{figure}
 	\begin{figure}[H]
 		\centering 
-		\includegraphics[height=7cm,width=14cm]{9.png}
+		\includegraphics[height=0.5cm,width=14cm]{9.png}
 		\end{figure}
 \subsubsection{删除属性列 AGE}
 \begin{lstlisting}[language=sql]
@@ -278,337 +278,506 @@ select * from student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{10.png}
+	\includegraphics[height=1.5cm,width=16cm]{10.png}
 	\end{figure}
 \subsubsection{创建一个教师课程数量表：teacher\_course(TNO,NUM\_COURSE)，两个属性分别表示授课教师工号，课程数量，其中TNO是主键}
 \begin{lstlisting}[language=sql]
-	
+	create table teacher_course  
+	(TNO char(7) primary key,  
+     NUM_COURSE int,  
+     foreign key(TNO) references Teacher(TNO)  
+    );  
 \end{lstlisting}
-\begin{figure}[H]
-	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
-	\end{figure}
+
 \subsubsection{用一条语句，结合表 course 记录，为表 teacher 中所有教师，在表 teacher\_course 添加对应记录（若表 course 中未出现的教师，则课程数量记为 NULL）}
 \begin{lstlisting}[language=sql]
-	
+	insert into teacher_course (TNO, NUM_COURSE)  
+select   
+    teacher.TNO,   
+    CASE   
+        WHEN COUNT(course.CNO) > 0 THEN COUNT(course.CNO)  
+        ELSE NULL   
+    END AS NUM_COURSE  
+from teacher  
+left join course on teacher.TNO = course.TNO  
+group by teacher.TNO;
+ 
+select * from teacher_course; 
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=4cm]{11.png}
 	\end{figure}
-\subsubsection{删除表 teacher\_course 中含有 NULL 的记录}\begin{lstlisting}[language=sql]
-	
+\subsubsection{删除表 teacher\_course 中含有 NULL 的记录}
+\begin{lstlisting}[language=sql]
+delete from teacher_course  
+where NUM_COURSE is NULL;  
+  
+select * from teacher_course; 
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=5cm,width=4cm]{12.png}
 	\end{figure}
 \subsubsection{删除表 teacher\_course}
 \begin{lstlisting}[language=sql]
-	
+	drop table teacher_course;	
 \end{lstlisting}
-\begin{figure}[H]
-	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
-	\end{figure}
 \subsubsection{在学生表 student 、成绩表 score 中分别插入一些数据}
 \begin{lstlisting}[language=sql]
-	
+alter table score drop foreign key score_ibfk_1;  
+ 
+alter table student modify column Sno VARCHAR(11);  
+alter table score add foreign key (SNO) references Student(Sno);  
+  
+insert into student (SNO, NAME, GENDER, BIRTHDAY, DEPART)  
+values   
+('PB22061161', 'GMH', 'male', '2004-07-25 00:00:00', 229),  
+('PB22081558', 'LYX', 'female', '2004-7-7 00:00:00', 229),  
+('PB22061177', 'WYB', 'male', '2003-12-29 00:00:00', 11); 
+ 
+select * from student;  
+ 
+alter table score drop foreign key score_ibfk_3;  
+  
+alter table score modify column Sno VARCHAR(11);  
+
+alter table score add foreign key (SNO) references Student(Sno);  
+  
+insert into score (SNO, CNO, DEGREE)  
+values  
+('PB22061161', '20230402', 96),  
+('PB22061161', '20230410', 97),  
+('PB22061161', '20230412', 99);  
+
+select * from score; 
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=10cm]{14.png}
 	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=12cm,width=7cm]{17.png}
+		\end{figure}
 \subsubsection{在 score 表中删除你所选的课程中成绩最低的一门课程的记录（可能会用到子查询）}
 \begin{lstlisting}[language=sql]
-	
+	select min(DEGREE) into @minDegree    
+	from score    
+	where SNO='PB22061161';  
+	  
+	delete from score    
+	where SNO='PB22061161' and DEGREE=@minDegree;  
+	  
+	select * from score where SNO='PB22061161';	
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1.2cm,width=4cm]{18.png}
 	\end{figure}
 \subsection{索引}
 \subsubsection{用 create 语句在 course 表的名称 NAME 上建立普通索引 NAME\_INDEX}
 \begin{lstlisting}[language=sql]
-	
+create index NAME_INDEX on course(name);
+show index from course;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1cm,width=16cm]{19.png}
 	\end{figure}
 \subsubsection{用 create 语句在 teacher 表的工号 TNO 上建立唯一索引 TNO\_INDEX}
 \begin{lstlisting}[language=sql]
-	
+create unique index TNO_INDEX on teacher(tno);
+show index from teacher;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=2cm,width=16cm]{20.png}
 	\end{figure}
 \subsubsection{用 create 语 句 在 score 表 上 的 学 号 SNO 、 成 绩 DEGREE 上 建 立 复 合 索引RECORD\_INDEX， 要求学号为降序，学号相同时成绩为升序}
 \begin{lstlisting}[language=sql]
-	
+	create index RECORD_INDEX on score (sno desc, degree);
 \end{lstlisting}
-\begin{figure}[H]
-	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
-	\end{figure}
+
 \subsubsection{用一条语句查询表 score 的索引}
 \begin{lstlisting}[language=sql]
-	
+	show index from score;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1.3cm,width=16cm]{21.png}
 	\end{figure}
 \subsubsection{删除 teacher 表字段 TNO 上的索引 TNO\_INDEX}
 \begin{lstlisting}[language=sql]
-	
+drop index TNO_INDEX on teacher;
+show index from teacher;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=0.7cm,width=16cm]{22.png}
 	\end{figure}
 \subsection{查询}
 \subsubsection{查询和你属于同一个系的学生学号和姓名(包括你本人)}
 \begin{lstlisting}[language=sql]
-	
+select Sno, NAME
+from student
+where DEPART='229'
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=4.7cm,width=5cm]{23.png}
 	\end{figure}
 \subsubsection{查询和你属于同一个系的学生学号和姓名(不包括你本人)}
 \begin{lstlisting}[language=sql]
-	
+select Sno, NAME
+from student
+where DEPART='229' and NAME!='GMH';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=5cm,width=5cm]{24.png}
 	\end{figure}
 \subsubsection{查询和你的某个好友属于同一个系的学生学号和姓名（9 题插入的某个好友）}
 \begin{lstlisting}[language=sql]
-	
+select Sno, NAME
+from student
+where DEPART='11';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=5.3cm,width=5cm]{15.png}
 	\end{figure}
 \subsubsection{查询和你的两个好友都不在一个系的学生学号和姓名（9 题插入的两个好友）}
 \begin{lstlisting}[language=sql]
-	
+select Sno, NAME
+from student
+where DEPART!='11' and DEPART!='229';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=4.5cm,width=5cm]{25.png}
 	\end{figure}
 \subsubsection{查询教过你的所有老师的工号和姓名}
 \begin{lstlisting}[language=sql]
-	
+select distinct teacher.Tno,teacher.NAME
+from score,course,teacher
+where course.CNO=score.CNO and course.TNO=teacher.TNO and score.SNO='PB22061161';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1cm,width=3cm]{26.png}
 	\end{figure}
 \subsubsection{查询 11 系和 229 系教师的总人数}
 \begin{lstlisting}[language=sql]
-	
+select count(TNO)
+from teacher 
+where DEPART='11' or DEPART='229';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1cm,width=2cm]{27.png}
 	\end{figure}
 \subsubsection{查询你的系中年龄（即当前年份减去出生年份） 最大的学生的学号、姓名和年龄}
 \begin{lstlisting}[language=sql]
-	
+select SNO,NAME,YEAR(CURDATE()) - YEAR(BIRTHDAY) as Maxage
+from student
+where DEPART='229' 
+and YEAR(CURDATE()) - YEAR(BIRTHDAY) = (
+	select max(YEAR(CURDATE()) - YEAR(BIRTHDAY))
+	from student
+	where DEPART='229');
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1cm,width=4cm]{28.png}
 	\end{figure}
 \subsubsection{查询你的系中年龄（即当前年份减去出生年份） 最小的学生的学号、姓名和年龄}
 \begin{lstlisting}[language=sql]
-	
+select SNO,NAME,YEAR(CURDATE()) - YEAR(BIRTHDAY) as Minage
+from student
+where DEPART='229' 
+and YEAR(CURDATE()) - YEAR(BIRTHDAY) = (
+	select min(YEAR(CURDATE()) - YEAR(BIRTHDAY))
+    from student
+    where DEPART='229');
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1.2cm,width=4cm]{29.png}
 	\end{figure}
 \subsubsection{查询选修 DB\_Design 课程且成绩在 75 分以下（不包括 75） 的学生的学号、姓名和分数}
 \begin{lstlisting}[language=sql]
-	
+select student.SNO, student.NAME, score.DEGREE
+from score, student, course
+where student.SNO=score.SNO and score.CNO=course.CNO and course.NAME='DB_Design' and score.DEGREE<75;	
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=0.8cm,width=3.5cm]{30.png}
 	\end{figure}
 \subsubsection{查询选修过“ZDH”老师课程的学生学号和姓名（去掉重复行）}
 \begin{lstlisting}[language=sql]
-	
+select distinct student.SNO, student.NAME
+from student, course, teacher, score
+where student.SNO=score.SNO and score.CNO=course.CNO and course.TNO=teacher.TNO 
+	and teacher.NAME='ZDH';	
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=6cm,width=4cm]{31.png}
 	\end{figure}
 \subsubsection{查询选过某课程的学生学号和分数，并按分数降序展示}
 \begin{lstlisting}[language=sql]
-	
+select score.SNO, score.DEGREE
+from score, course
+where score.CNO=course.CNO and course.NAME='Linear_Algebra'
+order by score.DEGREE desc;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=3cm,width=4cm]{32.png}
 	\end{figure}
 \subsubsection{查询每门课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}
 \begin{lstlisting}[language=sql]
-	
+select distinct score.CNO, course.NAME, avg(score.DEGREE) as ave_degree
+from score, course
+where score.CNO=course.CNO and course.TYPE=1
+group by score.CNO, course.NAME;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=6.2cm,width=8cm]{33.png}
 	\end{figure}
 \subsubsection{查询每门必修课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}
 \begin{lstlisting}[language=sql]
-	
+select distinct score.CNO, course.NAME, avg(score.DEGREE) as ave_degree
+from score, course
+where score.CNO=course.CNO and course.TYPE=1
+group by score.CNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=5cm,width=8cm]{34.png}
 	\end{figure}
 \subsubsection{查询至少选修了 ZDH 老师（TNO=”TA90023”）开设的所有课程的学生学号}
 \begin{lstlisting}[language=sql]
-	
+select distinct student.SNO, student.NAME
+from student
+where not exists
+	(select *
+	 from course
+     where course.TNO='TA90023' and not exists
+			(select *
+            from score
+            where student.SNO=score.SNO and score.CNO=course.CNO));
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=3cm,width=6cm]{35.png}
 	\end{figure}
 \subsubsection{查询每门课程的最高分和最低分，并计算其分数差。其中每行包含课程号、课程名和最高分、最低分和分数差（课程无成绩的不用包括）}
 \begin{lstlisting}[language=sql]
-	
+select course.CNO, course.NAME, max(score.DEGREE), min(score.DEGREE), max(score.DEGREE)-min(score.DEGREE) as score_diffence
+from score, course
+where score.CNO=course.CNO
+group by course.CNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=5.5cm,width=14cm]{36.png}
 	\end{figure}
 \subsubsection{查询存在考试成绩低于 75 分的学生学号，以及低于 75 分的课程数量}
 \begin{lstlisting}[language=sql]
-	
+	select CNO, count(CNO) as num
+from score
+where DEGREE<75
+group by CNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=2.7cm,width=4cm]{37.png}
 	\end{figure}
 \subsubsection{查询所教过的课程中有学生考试成绩低于 75 分的教师的工号和姓名（去掉重复行）}
 \begin{lstlisting}[language=sql]
-	
+select distinct teacher.TNO, teacher.NAME
+from teacher, score, course
+where teacher.TNO=course.TNO
+	and exists(
+    select * 
+    from score
+    where course.CNO=score.CNO and score.DEGREE<75);
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=2.5cm,width=4cm]{13.png}
 	\end{figure}
 \subsubsection{查询选修少于 2 门课程的学生的学号、姓名}
 \begin{lstlisting}[language=sql]
-	
+select student.SNO, student.NAME
+from student, score
+where student.SNO=score.SNO 
+group by score.SNO
+having count(score.SNO)<2;
+
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=8cm,width=4cm]{38.png}
 	\end{figure}
-\subsubsection{查询至少选修了 YH 同学(SNO=”PB210000001”)所选全部课程的学生学号}
+\subsubsection{查询至少选修了 YH 同学(SNO="PB210000001")所选全部课程的学生学号}
 \begin{lstlisting}[language=sql]
-	
+select distinct student.SNO, student.NAME
+from student
+where not exists
+	(select *
+	 from score score1
+     where score1.SNO='PB210000001' and not exists
+			(select *
+            from score score2
+            where student.SNO=score2.SNO and score1.CNO=score2.CNO));
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=1cm,width=3cm]{16.png}
 	\end{figure}
 \subsubsection{查询 Course 表中各个课程名称与相应的平均成绩（没有选课的学生平均成绩为 NULL） }
 \begin{lstlisting}[language=sql]
-	
+select distinct course.NAME, avg(score.DEGREE) as ave_degree
+from score
+left join course on score.CNO=course.CNO
+group by score.CNO;
+
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{39.png}
 	\end{figure}
 \subsubsection{查询每个系的学生人数和每个系的平均分，其中每行包含系号、系的人数和平均成绩}
 \begin{lstlisting}[language=sql]
-	
+select student.DEPART, count(distinct student.SNO) as num_student,
+  avg(case when score.DEGREE is not null then score.DEGREE else null end) as avg_score
+from student 
+left join score
+on student.SNO=score.SNO
+group by student.DEPART;
+
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{40.png}
 	\end{figure}
 \subsubsection{查询所有未选修 DB\_Design 课程或者 Data\_Mining 课程的学生的学生姓名（去掉重复行）}
 \begin{lstlisting}[language=sql]
-	
+select distinct student.NAME
+from student, score, course
+where student.SNO=score.SNO and score.CNO=course.CNO and course.NAME!='DB_Design' and course.NAME!='Data_Mining';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{41.png}
 	\end{figure}
 \subsubsection{查询各个课程的课程名及选该课的学生的最小年龄、最大年龄和平均年龄。（包括没有人选的课）}
 \begin{lstlisting}[language=sql]
-	
+select course.NAME, min(year(current_date())-year(student.BITHDAY)) as Minage,  max(year(current_date())-year(student.BITHDAY)) as Maxage, avg(year(current_date())-year(student.BITHDAY)) as aveage
+from score
+left join student
+on score.SNO=student.SNO
+left join course 
+on course.CNO=score.CNO
+group by course.NAME;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{42.png}
 	\end{figure}
-\subsubsection{查询选修了课程名中包含”Computer”课程的学生的学号和姓名}
+\subsubsection{查询选修了课程名中包含"Computer"课程的学生的学号和姓名}
 \begin{lstlisting}[language=sql]
-	
+select student.SNO, student.NAME
+from score, student, course 
+where score.SNO=student.SNO and course.CNO=score.CNO and course.NAME like 'Computer%';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{43.png}
 	\end{figure}
 \subsubsection{设课程平均成绩为 x，查询各个课程成绩处于[x-12, x+12]区间的同学的成绩表，即包含 SNO、CNO、 DEGREE}
 \begin{lstlisting}[language=sql]
-	
+select score1.*
+from score score1
+where abs((select avg(DEGREE) from score where CNO=score1.CNO) - score1.DEGREE) <= 12;
+
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=4cm]{44.png}
 	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=7cm,width=4cm]{45.png}
+		\end{figure}
 \subsection{视图}
 \subsubsection{建立 229 系的学生视图（db\_22\_student），属性与 student 表一样，并要求对该视图进行修改和插入操作时仍需保证该视图只有 229 系的学生}
 \begin{lstlisting}[language=sql]
-	
+create view db_229_student as
+select *
+from student
+where DEPART=229
+with check option;
+
+select *
+from db_229_student;	
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{46.png}
 	\end{figure}
-\subsubsection{将 229 系学生视图（db\_229\_student）中学号为“PB210000020”的学生姓名改为{你的姓名（英文首字母）}}
+\subsubsection{将 229 系学生视图（db\_229\_student）中学号为"PB210000020"的学生姓名改为{你的姓名（英文首字母）}}
 \begin{lstlisting}[language=sql]
-	
+update db_229_student
+set NAME='G'
+where SNO='PB210000020';
+
+select *
+from db_229_student;
+
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{47.png}
 	\end{figure}
-\subsubsection{在 229 系学生视图（db\_229\_student）中找出年龄小于 22 岁的学生，包含 SNO、 NAME}
+\subsubsection{在 229 系学生视图（db\_229\_student）中找出年龄小于 22 岁的学生，包含 SNO、NAME}
 \begin{lstlisting}[language=sql]
-	
+select SNO, NAME
+from db_229_student
+where year(current_date())-year(BIRTHDAY) < 22;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{48.png}
 	\end{figure}
 \subsubsection{向 student 表中插入一名“学号 SA210110021，姓名 QXY，性别女，生日 2007/7/27， 229系”的学生。然后查询视图 db\_229\_student 的所有学生，验证其是否更新}
 \begin{lstlisting}[language=sql]
-	
+insert into student (SNO, NAME, GENDER, BIRTHDAY, DEPART)  
+values   
+('SA210110021', 'QXY', 'female', '2007-07-27', '229');
+
+select *
+from db_229_student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{49.png}
 	\end{figure}
 \subsubsection{向视图 db\_229\_student 中插入一名“学号 SA210110023，姓名 DPC，性别男，生日1997/4/27， 11 系”的学生，观察到了什么现象？}
 \begin{lstlisting}[language=sql]
-	
+insert into db_229_student (SNO, NAME, GENDER, BIRTHDAY, DEPART)  
+values   
+('SA210110023', 'DPC', '男', '1997-04-27', '11');
+
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=0.5cm,width=14cm]{50.png}
 	\end{figure}
 \subsubsection{删除视图 db\_229\_student}
 \begin{lstlisting}[language=sql]
@@ -617,43 +786,216 @@ select * from student;
 \subsection{触发器}
 \subsubsection{创建关系表： teacher\_salary(TNO, SAL)，其中 TNO 是教师工号（主键）， SAL 是教师工资（类型 float）}
 \begin{lstlisting}[language=sql]
-	
+	create table teacher_sal
+	(TNO char(7) primary key,  
+	 SAL float
+	);
 \end{lstlisting}
-\begin{figure}[H]
-	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
-	\end{figure}
 \subsubsection{定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定义完整性规则： “表中出现的工号必须也出现在 teacher 表中，否则报错”。}
 
 \begin{lstlisting}[language=sql]
-	
+DELIMITER //
+create trigger insert_sal
+before insert on teacher_sal
+for each row
+begin
+	declare TNO_num int;
+	select count(*) into TNO_num
+    from teacher
+    where TNO = new.TNO;
+    
+    if TNO_num = 0 then
+		signal sqlstate '45000'
+        set message_text = '工号必须存在于teacher表中';
+	end if;
+end;
+//
+DELIMITER ;
+
+show create trigger insert_sal;
+
+insert into teacher_sal (TNO, SAL)
+values
+('TA90021', 6000.4);
+insert into teacher_sal (TNO, SAL)
+values
+('TA12345', 4900.2);
+
+DELIMITER //
+create trigger update_sal
+before update on teacher_sal
+for each row
+begin
+	declare TNO_num int;
+	select count(*) into TNO_num
+    from teacher
+    where TNO = new.TNO;
+    
+    if TNO_num = 0 then
+		signal sqlstate '45000'
+        set message_text = '工号必须存在于teacher表中';
+	end if;
+end;
+//
+DELIMITER ;
+
+show create trigger update_sal;
+
+update teacher_sal 
+set TNO = 'TA12345'
+where TNO = 'TA90021';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{51.png}
 	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=7cm,width=14cm]{52.png}
+		\end{figure}
+		\begin{figure}[H]
+			\centering 
+			\includegraphics[height=7cm,width=14cm]{53.png}
+			\end{figure}
+			\begin{figure}[H]
+				\centering 
+				\includegraphics[height=7cm,width=14cm]{54.png}
+				\end{figure}
 \subsubsection{定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定 义 完 整 性 规 则 ：
 “Instructor/Associate Professor/Professor 的工资不能低于 4000/7000/10000，且不能高于
 7000/10000/13000，如果低于，则改为 4000/7000/10000”，如果高于，则改为 7000/10000/13000}
 \begin{lstlisting}[language=sql]
-	
+DELIMITER //
+create trigger insert2_sal
+before insert on teacher_sal
+for each row
+begin
+	declare pos varchar(30);
+    select POSITION into pos
+    from teacher
+    where teacher.TNO = NEW.TNO;
+ 
+	if new.SAL < 4000 and pos = 'Instructor' then
+		set new.SAL = 4000;
+	elseif new.sal < 7000 and pos = 'Associate professor' then
+        set new.sal = 7000;
+    elseif new.sal < 10000 and pos = 'Professor' then
+        set new.sal = 10000;
+    elseif new.sal > 7000 and pos = 'Instructor' then
+        set new.sal = 7000;
+    elseif new.sal > 10000 and pos = 'Associate professor' then
+        set new.sal = 10000;
+    elseif new.sal > 13000 and pos = 'Professor' then
+        set new.sal = 13000;
+    end if;
+end;
+//
+DELIMITER ;
+
+show create trigger update_sal;
+
+insert into teacher_sal (TNO, SAL)
+values
+('TA90022', 6500.4),
+('TA90025', 9500.4),
+('TA90023', 3500.4),
+('TA90028', 7500.4),
+('TA90031', 10500.4),
+('TA90030', 13500.4);
+
+select * from teacher_sal;
+
+DELIMITER //
+create trigger update2_sal
+before update on teacher_sal
+for each row
+begin
+	declare pos varchar(30);
+    select POSITION into pos
+    from teacher
+    where teacher.TNO = NEW.TNO;
+ 
+	if new.SAL < 4000 and pos = 'Instructor' then
+		set new.SAL = 4000;
+	elseif new.sal < 7000 and pos = 'Associate professor' then
+        set new.sal = 7000;
+    elseif new.sal < 10000 and pos = 'Professor' then
+        set new.sal = 10000;
+    elseif new.sal > 7000 and pos = 'Instructor' then
+        set new.sal = 7000;
+    elseif new.sal > 10000 and pos = 'Associate professor' then
+        set new.sal = 10000;
+    elseif new.sal > 13000 and pos = 'Professor' then
+        set new.sal = 13000;
+    end if;
+end;
+//
+DELIMITER ;
+
+update teacher_sal
+set SAl = '6500'
+where TNO = 'TA90022';
+
+update teacher_sal
+set SAl = '9500'
+where TNO = 'TA90025';
+
+update teacher_sal
+set SAl = '7500'
+where TNO = 'TA90028';
+
+update teacher_sal
+set SAl = '3500'
+where TNO = 'TA90023';
+
+update teacher_sal
+set SAl = '10500'
+where TNO = 'TA90031';
+
+update teacher_sal
+set SAl = '13500'
+where TNO = 'TA90030';
+
+select * from teacher_sal;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{55.png}
 	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=7cm,width=14cm]{56.png}
+		\end{figure}
+		\begin{figure}[H]
+			\centering 
+			\includegraphics[height=7cm,width=14cm]{62.png}
+			\end{figure}
+			\begin{figure}[H]
+				\centering 
+				\includegraphics[height=7cm,width=14cm]{57.png}
+				\end{figure}
 \subsubsection{删除刚刚创建的所有触发器}
 \begin{lstlisting}[language=sql]
-	
+drop trigger insert_sal;
+drop trigger update_sal;
+drop trigger insert2_sal;
+drop trigger update2_sal;
+
 \end{lstlisting}
-\begin{figure}[H]
-	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
-	\end{figure}
 \subsection{空值}
 \subsubsection{将 score 表中的 Data\_Mining 课程成绩设为空值，然后在 score 表查询学生学号和分数，并按分数升序展示。观察 NULL 在 MySQL 中的大小是怎样的}
 \begin{lstlisting}[language=sql]
-	
+update score
+set DEGREE = NULL
+where CNO in
+	(select CNO
+     from Course
+     where NAME = 'Data_Mining'
+	);
+    
+select SNO, DEGREE 
+from score
+order by DEGREE;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
@@ -664,21 +1006,30 @@ select * from student;
 		\includegraphics[height=7cm,width=4cm]{59.png}
 		\end{figure}
 \subsection{开放题}
-\subsubsection{}
+\subsubsection{查询每个学生的选课数量}
 \begin{lstlisting}[language=sql]
-	
+select student.SNO, student.NAME, count(score.DEGREE) as num
+from student
+left join score
+on student.SNO = score.SNO
+group by student.Sno;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=10cm,width=6cm]{60.png}
 	\end{figure}
-\subsubsection{}
+\subsubsection{查询没有选GMH选过的任意一门课的学生名字}
 \begin{lstlisting}[language=sql]
-	
+select distinct NAME  
+from student, score 
+where student.SNO = score.Sno and score.CNO not in
+									(select CNO
+									 from student student1, score score1
+									 where student1.NAME = 'GMH' and student1.Sno = score1.Sno);
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=1cm]{61.png}
 	\end{figure}
 	\section{Conclusion}
     \end{document}
