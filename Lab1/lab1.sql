@@ -489,3 +489,105 @@ values
 drop view db_229_student;
 
 -- 47
+create table teacher_sal
+	(TNO char(7) primary key,  
+	 SAL float,
+     foreign key(TNO) references teacher(TNO)
+	);  
+select * from teacher_sal;
+
+-- 48
+DELIMITER //
+create trigger insert_sal
+before insert on teacher_sal
+for each row
+begin
+	declare TNO_num char(7);
+	select count(*) into TNO_num
+    from teacher
+    where TNO = new.TNO;
+    
+    if TNO_num = 0 then
+		signal sqlstate '45000'
+        set message_text = '工号必须存在于teacher表中';
+	end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger update_sal
+before update on teacher_sal
+for each row
+begin
+	declare TNO_num char(7);
+	select count(*) into TNO_num
+    from teacher
+    where TNO = new.TNO;
+    
+    if TNO_num = 0 then
+		signal sqlstate '45000'
+        set message_text = '工号必须存在于teacher表中';
+	end if;
+end;
+//
+DELIMITER ;
+
+-- 49
+DELIMITER //
+create trigger insert2_sal
+before insert on teacher_sal
+for each row
+begin
+	declare pos varchar(30);
+    select POSITION into pos
+    from teacher;
+ 
+	if new.SAL < 4000 and pos = 'Instructor' then
+		set new.SAL = 4000;
+	elseif new.sal < 7000 and position_salary = 'Associate professor' then
+        set new.sal = 7000;
+    elseif new.sal < 10000 and position_salary = 'Professor' then
+        set new.sal = 10000;
+    elseif new.sal > 7000 and position_salary = 'Instructor' then
+        set new.sal = 7000;
+    elseif new.sal > 10000 and position_salary = 'Associate professor' then
+        set new.sal = 10000;
+    elseif new.sal > 13000 and position_salary = 'Professor' then
+        set new.sal = 1300;
+    end if;
+end;
+//
+DELIMITER ;
+
+DELIMITER //
+create trigger update2_sal
+before update on teacher_sal
+for each row
+begin
+	declare pos varchar(30);
+    select POSITION into pos
+    from teacher;
+ 
+	if new.SAL < 4000 and pos = 'Instructor' then
+		set new.SAL = 4000;
+	elseif new.sal < 7000 and position_salary = 'Associate professor' then
+        set new.sal = 7000;
+    elseif new.sal < 10000 and position_salary = 'Professor' then
+        set new.sal = 10000;
+    elseif new.sal > 7000 and position_salary = 'Instructor' then
+        set new.sal = 7000;
+    elseif new.sal > 10000 and position_salary = 'Associate professor' then
+        set new.sal = 10000;
+    elseif new.sal > 13000 and position_salary = 'Professor' then
+        set new.sal = 1300;
+    end if;
+end;
+//
+DELIMITER ;
+
+-- 50
+drop trigger insert_sal;
+drop trigger update_sal;
+drop trigger insert2_sal;
+drop trigger insert2_sal;

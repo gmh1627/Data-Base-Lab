@@ -61,14 +61,14 @@
 根据所给 Student.csv、 Teacher.csv、 Course.csv、 Score.csv 表中的数据信息，在数
 据库中创建对应的关系表并将数据录入到数据库中。
 \begin{lstlisting}[language=sql]
-	create schema s_t_c_s;  
-create table student  
-	(SNO char(11) primary key,  
-     NAME varchar(4),  
-     GENDER varchar(6),  
-     BIRTHDAY datetime,  
-     DEPART int  
-	);  
+create schema s_t_c_s;  
+create table student(
+	SNO char(11) primary key,  
+	NAME varchar(4),  
+	GENDER varchar(6),  
+	BIRTHDAY datetime,  
+	DEPART int  
+);  
   
 insert into student (SNO, NAME, GENDER, BIRTHDAY, DEPART)  
 values
@@ -98,14 +98,14 @@ values
 ('PB210000024', 'YHS', 'female', '2003-04-01 00:00:00', 229),
 ('PB210000025', 'YWB', 'male', '2003-08-12 00:00:00', 229);
 
-create table teacher  
-	(TNO char(7) primary key,  
-	 NAME varchar(4),  
-     GENDER varchar(6),  
-     BIRTHDAY datetime,  
-     POSITION varchar(30),  
-     DEPART int  
-	);  
+create table teacher(
+	TNO char(7) primary key,  
+	NAME varchar(4),  
+    GENDER varchar(6),  
+    BIRTHDAY datetime,  
+    POSITION varchar(30),  
+    DEPART int  
+);  
   
 insert into teacher (TNO, NAME, GENDER, BIRTHDAY, POSITION, DEPART)  
 values
@@ -122,13 +122,13 @@ values
 ('TA90031', 'LQA', 'female', '1986/11/17 00:00:00', 'Associate Professor', 10),
 ('TA90032', 'GHJ', 'male', '1976/10/1 00:00:00', 'Associate Professor', 18);
 
-create table course  
-	(CNO char(8) primary key,   
-	 NAME varchar(50),   
-     TYPE int,   
-	 TNO char(7),  
-     foreign key(TNO) references teacher(TNO)  
-    );  
+create table course(
+	CNO char(8) primary key,   
+	NAME varchar(50),   
+	TYPE int,   
+	TNO char(7),  
+	foreign key(TNO) references teacher(TNO)  
+);  
     
 insert into course (CNO, NAME, TYPE, TNO)
 values
@@ -218,62 +218,67 @@ select * from student;
 select * from teacher;  
 select * from course;  
 select * from score;  
-  
 	\end{lstlisting}
 	\begin{figure}[H]
 		\centering 
-		\includegraphics[height=3cm,width=14cm]{2.png}
+		\includegraphics[height=8cm,width=6cm]{2.png}
 		\end{figure}
 		\begin{figure}[H]
 			\centering 
-			\includegraphics[height=3cm,width=14cm]{3.png}
+			\includegraphics[height=3.5cm,width=6cm]{3.png}
 			\end{figure}
 			\begin{figure}[H]
 				\centering 
-				\includegraphics[height=3cm,width=14cm]{4.png}
+				\includegraphics[height=3cm,width=6cm]{4.png}
 				\end{figure}
 				\begin{figure}[H]
 					\centering 
-					\includegraphics[height=3cm,width=14cm]{5.png}
+					\includegraphics[height=12cm,width=6cm]{5.png}
 					\end{figure}
 					\begin{figure}[H]
 						\centering 
-						\includegraphics[height=3cm,width=14cm]{6.png}
+						\includegraphics[height=9cm,width=6cm]{6.png}
 						\end{figure}
-\section{任务二：实现以下各题功能的 SQL 语句(部分题目的结果受前面题目影响)}
+\section{任务二：实现以下各题功能的 SQL 语句}
 
 \subsection{修改基本表}
 \subsubsection{在学生表 student 中增加一个新的属性列 AGE(年龄)，类型为 int}
 \begin{lstlisting}[language=sql]
-	
+	alter table student add AGE int;  
 \end{lstlisting}
-\begin{figure}[H]
-	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
-	\end{figure}
 \subsubsection{计算每个学生的年龄(AGE)}
 \begin{lstlisting}[language=sql]
-	
+set sql_safe_updates = 0;  
+update student set AGE = YEAR(CURDATE()) - YEAR(BIRTHDAY);  
+select AGE from student;  
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{7.png}
 	\end{figure}
 \subsubsection{为每个学生的年龄加2， 将 AGE的数据类型由int改为char}
 \begin{lstlisting}[language=sql]
-	
+	update student set AGE = AGE + 2;  
+	select AGE from student;  
+	  
+	alter table student modify column AGE CHAR(2);
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{8.png}
 	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=7cm,width=14cm]{9.png}
+		\end{figure}
 \subsubsection{删除属性列 AGE}
 \begin{lstlisting}[language=sql]
-	
+alter table student drop column AGE;  
+select * from student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=14cm]{10.png}
 	\end{figure}
 \subsubsection{创建一个教师课程数量表：teacher\_course(TNO,NUM\_COURSE)，两个属性分别表示授课教师工号，课程数量，其中TNO是主键}
 \begin{lstlisting}[language=sql]
@@ -619,9 +624,7 @@ select * from score;
 	\includegraphics[height=7cm,width=14cm]{1.png}
 	\end{figure}
 \subsubsection{定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定义完整性规则： “表中出现的工号必须也出现在 teacher 表中，否则报错”。}
-注：该规则实际上就是外键约束； MySQL 中
-可使用 SIGNAL 抛出错误；需要为 INSERT 和 UPDATE 分别定义触发器。请展示出成功创建
-触发器和测试抛出错误信息的截图。
+
 \begin{lstlisting}[language=sql]
 	
 \end{lstlisting}
@@ -639,7 +642,6 @@ select * from score;
 	\centering 
 	\includegraphics[height=7cm,width=14cm]{1.png}
 	\end{figure}
-注：需要为 INSERT 和 UPDATE 分别定义触发器。并检验触发器是否工作：为 teacher\_salary构造 INSERT 和 UPDATE 语句并激活所定义过的触发器，将过程截图展示
 \subsubsection{删除刚刚创建的所有触发器}
 \begin{lstlisting}[language=sql]
 	
@@ -655,8 +657,12 @@ select * from score;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{1.png}
+	\includegraphics[height=7cm,width=4cm]{58.png}
 	\end{figure}
+	\begin{figure}[H]
+		\centering 
+		\includegraphics[height=7cm,width=4cm]{59.png}
+		\end{figure}
 \subsection{开放题}
 \subsubsection{}
 \begin{lstlisting}[language=sql]
