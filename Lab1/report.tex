@@ -624,7 +624,7 @@ having count(score.SNO)<2;
 	\centering 
 	\includegraphics[height=8cm,width=4cm]{38.png}
 	\end{figure}
-\subsubsection{查询至少选修了 YH 同学(SNO="PB210000001")所选全部课程的学生学号}
+\subsubsection{查询至少选修了 YH 同学(SNO=“PB210000001”)所选全部课程的学生学号}
 \begin{lstlisting}[language=sql]
 select distinct student.SNO, student.NAME
 from student
@@ -650,7 +650,7 @@ group by score.CNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{39.png}
+	\includegraphics[height=6cm,width=6cm]{39.png}
 	\end{figure}
 \subsubsection{查询每个系的学生人数和每个系的平均分，其中每行包含系号、系的人数和平均成绩}
 \begin{lstlisting}[language=sql]
@@ -664,7 +664,7 @@ group by student.DEPART;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{40.png}
+	\includegraphics[height=4cm,width=6cm]{40.png}
 	\end{figure}
 \subsubsection{查询所有未选修 DB\_Design 课程或者 Data\_Mining 课程的学生的学生姓名（去掉重复行）}
 \begin{lstlisting}[language=sql]
@@ -674,7 +674,7 @@ where student.SNO=score.SNO and score.CNO=course.CNO and course.NAME!='DB_Design
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{41.png}
+	\includegraphics[height=9cm,width=1.5cm]{41.png}
 	\end{figure}
 \subsubsection{查询各个课程的课程名及选该课的学生的最小年龄、最大年龄和平均年龄。（包括没有人选的课）}
 \begin{lstlisting}[language=sql]
@@ -698,7 +698,7 @@ where score.SNO=student.SNO and course.CNO=score.CNO and course.NAME like 'Compu
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{43.png}
+	\includegraphics[height=4cm,width=4cm]{43.png}
 	\end{figure}
 \subsubsection{设课程平均成绩为 x，查询各个课程成绩处于[x-12, x+12]区间的同学的成绩表，即包含 SNO、CNO、 DEGREE}
 \begin{lstlisting}[language=sql]
@@ -709,11 +709,11 @@ where abs((select avg(DEGREE) from score where CNO=score1.CNO) - score1.DEGREE) 
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=4cm]{44.png}
+	\includegraphics[height=12cm,width=5cm]{44.png}
 	\end{figure}
 	\begin{figure}[H]
 		\centering 
-		\includegraphics[height=7cm,width=4cm]{45.png}
+		\includegraphics[height=8.5cm,width=5cm]{45.png}
 		\end{figure}
 \subsection{视图}
 \subsubsection{建立 229 系的学生视图（db\_22\_student），属性与 student 表一样，并要求对该视图进行修改和插入操作时仍需保证该视图只有 229 系的学生}
@@ -729,7 +729,7 @@ from db_229_student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{46.png}
+	\includegraphics[height=6cm,width=14cm]{46.png}
 	\end{figure}
 \subsubsection{将 229 系学生视图（db\_229\_student）中学号为"PB210000020"的学生姓名改为{你的姓名（英文首字母）}}
 \begin{lstlisting}[language=sql]
@@ -741,6 +741,7 @@ select *
 from db_229_student;
 
 \end{lstlisting}
+注：这里我把名字修改为了自己姓的首字母G，不过原理上没区别，而且修改起来比较麻烦，就不改了。
 \begin{figure}[H]
 	\centering 
 	\includegraphics[height=7cm,width=14cm]{47.png}
@@ -753,7 +754,7 @@ where year(current_date())-year(BIRTHDAY) < 22;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{48.png}
+	\includegraphics[height=4cm,width=6cm]{48.png}
 	\end{figure}
 \subsubsection{向 student 表中插入一名“学号 SA210110021，姓名 QXY，性别女，生日 2007/7/27， 229系”的学生。然后查询视图 db\_229\_student 的所有学生，验证其是否更新}
 \begin{lstlisting}[language=sql]
@@ -766,7 +767,7 @@ from db_229_student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{49.png}
+	\includegraphics[height=6cm,width=14cm]{49.png}
 	\end{figure}
 \subsubsection{向视图 db\_229\_student 中插入一名“学号 SA210110023，姓名 DPC，性别男，生日1997/4/27， 11 系”的学生，观察到了什么现象？}
 \begin{lstlisting}[language=sql]
@@ -777,7 +778,7 @@ values
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=0.5cm,width=14cm]{50.png}
+	\includegraphics[height=0.3cm,width=16cm]{50.png}
 	\end{figure}
 \subsubsection{删除视图 db\_229\_student}
 \begin{lstlisting}[language=sql]
@@ -847,19 +848,19 @@ where TNO = 'TA90021';
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{51.png}
+	\includegraphics[height=0.6cm,width=16cm]{51.png}
 	\end{figure}
 	\begin{figure}[H]
 		\centering 
-		\includegraphics[height=7cm,width=14cm]{52.png}
+		\includegraphics[height=0.3cm,width=16cm]{52.png}
 		\end{figure}
 		\begin{figure}[H]
 			\centering 
-			\includegraphics[height=7cm,width=14cm]{53.png}
+			\includegraphics[height=0.6cm,width=16cm]{53.png}
 			\end{figure}
 			\begin{figure}[H]
 				\centering 
-				\includegraphics[height=7cm,width=14cm]{54.png}
+				\includegraphics[height=0.3cm,width=16cm]{54.png}
 				\end{figure}
 \subsubsection{定义一个 BEFORE 行级触发器，为关系表 teacher\_salary 定 义 完 整 性 规 则 ：
 “Instructor/Associate Professor/Professor 的工资不能低于 4000/7000/10000，且不能高于
@@ -960,19 +961,19 @@ select * from teacher_sal;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=14cm]{55.png}
+	\includegraphics[height=0.6cm,width=16cm]{55.png}
 	\end{figure}
 	\begin{figure}[H]
 		\centering 
-		\includegraphics[height=7cm,width=14cm]{56.png}
+		\includegraphics[height=3cm,width=3.5cm]{56.png}
 		\end{figure}
 		\begin{figure}[H]
 			\centering 
-			\includegraphics[height=7cm,width=14cm]{62.png}
+			\includegraphics[height=0.6cm,width=16cm]{62.png}
 			\end{figure}
 			\begin{figure}[H]
 				\centering 
-				\includegraphics[height=7cm,width=14cm]{57.png}
+				\includegraphics[height=3cm,width=3.5cm]{57.png}
 				\end{figure}
 \subsubsection{删除刚刚创建的所有触发器}
 \begin{lstlisting}[language=sql]
@@ -999,11 +1000,11 @@ order by DEGREE;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=7cm,width=4cm]{58.png}
+	\includegraphics[height=9.5cm,width=4cm]{58.png}
 	\end{figure}
 	\begin{figure}[H]
 		\centering 
-		\includegraphics[height=7cm,width=4cm]{59.png}
+		\includegraphics[height=9cm,width=4cm]{59.png}
 		\end{figure}
 \subsection{开放题}
 \subsubsection{查询每个学生的选课数量}
@@ -1016,7 +1017,7 @@ group by student.Sno;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=10cm,width=6cm]{60.png}
+	\includegraphics[height=10cm,width=4.5cm]{60.png}
 	\end{figure}
 \subsubsection{查询没有选GMH选过的任意一门课的学生名字}
 \begin{lstlisting}[language=sql]
