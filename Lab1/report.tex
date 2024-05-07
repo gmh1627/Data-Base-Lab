@@ -254,7 +254,7 @@ select AGE from student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=8cm,width=1cm]{7.png}
+	\includegraphics[height=8cm,width=0.8cm]{7.png}
 	\end{figure}
 \subsubsection{为每个学生的年龄加2， 将 AGE的数据类型由int改为char}
 \begin{lstlisting}[language=sql]
@@ -265,7 +265,7 @@ select AGE from student;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=8cm,width=1cm]{8.png}
+	\includegraphics[height=8cm,width=0.8cm]{8.png}
 	\end{figure}
 	\begin{figure}[H]
 		\centering 
@@ -383,7 +383,7 @@ show index from course;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=1cm,width=16cm]{19.png}
+	\includegraphics[height=1cm,width=16cm]{21.png}
 	\end{figure}
 \subsubsection{用 create 语句在 teacher 表的工号 TNO 上建立唯一索引 TNO\_INDEX}
 \begin{lstlisting}[language=sql]
@@ -392,7 +392,7 @@ show index from teacher;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=2cm,width=16cm]{20.png}
+	\includegraphics[height=2cm,width=16cm]{19.png}
 	\end{figure}
 \subsubsection{用 create 语 句 在 score 表 上 的 学 号 SNO 、 成 绩 DEGREE 上 建 立 复 合 索引RECORD\_INDEX， 要求学号为降序，学号相同时成绩为升序}
 \begin{lstlisting}[language=sql]
@@ -405,7 +405,7 @@ show index from teacher;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=1.3cm,width=16cm]{21.png}
+	\includegraphics[height=1.3cm,width=16cm]{20.png}
 	\end{figure}
 \subsubsection{删除 teacher 表字段 TNO 上的索引 TNO\_INDEX}
 \begin{lstlisting}[language=sql]
@@ -539,10 +539,10 @@ order by score.DEGREE desc;
 	\end{figure}
 \subsubsection{查询每门课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}
 \begin{lstlisting}[language=sql]
-select distinct score.CNO, course.NAME, avg(score.DEGREE) as ave_degree
-from score, course
-where score.CNO=course.CNO and course.TYPE=1
-group by score.CNO, course.NAME;
+select distinct course.CNO, course.NAME, avg(score.DEGREE) as ave_degree
+from course left join score
+on score.CNO=course.CNO
+group by course.CNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
@@ -550,10 +550,11 @@ group by score.CNO, course.NAME;
 	\end{figure}
 \subsubsection{查询每门必修课的平均成绩，其中每行包含课程号、课程名和平均成绩（包括平均成绩为NULL，即该课没有成绩）}
 \begin{lstlisting}[language=sql]
-select distinct score.CNO, course.NAME, avg(score.DEGREE) as ave_degree
-from score, course
-where score.CNO=course.CNO and course.TYPE=1
-group by score.CNO;
+select distinct course.CNO, course.NAME, avg(score.DEGREE) as ave_degree
+from course left join score
+on score.CNO=course.CNO
+where course.TYPE=1
+group by course.CNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
@@ -561,7 +562,7 @@ group by score.CNO;
 	\end{figure}
 \subsubsection{查询至少选修了 ZDH 老师（TNO=”TA90023”）开设的所有课程的学生学号}
 \begin{lstlisting}[language=sql]
-select distinct student.SNO, student.NAME
+select distinct student.SNO
 from student
 where not exists
 	(select *
@@ -573,7 +574,7 @@ where not exists
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
-	\includegraphics[height=3cm,width=6cm]{35.png}
+	\includegraphics[height=3cm,width=3cm]{35.png}
 	\end{figure}
 \subsubsection{查询每门课程的最高分和最低分，并计算其分数差。其中每行包含课程号、课程名和最高分、最低分和分数差（课程无成绩的不用包括）}
 \begin{lstlisting}[language=sql]
@@ -588,10 +589,10 @@ group by course.CNO;
 	\end{figure}
 \subsubsection{查询存在考试成绩低于 75 分的学生学号，以及低于 75 分的课程数量}
 \begin{lstlisting}[language=sql]
-	select CNO, count(CNO) as num
+select SNO, count(CNO) as num
 from score
 where DEGREE<75
-group by CNO;
+group by SNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
@@ -626,7 +627,7 @@ having count(score.SNO)<2;
 	\end{figure}
 \subsubsection{查询至少选修了 YH 同学(SNO=“PB210000001”)所选全部课程的学生学号}
 \begin{lstlisting}[language=sql]
-select distinct student.SNO, student.NAME
+select distinct student.SNO
 from student
 where not exists
 	(select *
@@ -643,10 +644,9 @@ where not exists
 \subsubsection{查询 Course 表中各个课程名称与相应的平均成绩（没有选课的学生平均成绩为 NULL） }
 \begin{lstlisting}[language=sql]
 select distinct course.NAME, avg(score.DEGREE) as ave_degree
-from score
-left join course on score.CNO=course.CNO
-group by score.CNO;
-
+from course
+left join score on score.CNO=course.CNO
+group by course.CNO;
 \end{lstlisting}
 \begin{figure}[H]
 	\centering 
@@ -1032,5 +1032,5 @@ where student.SNO = score.Sno and score.CNO not in
 	\centering 
 	\includegraphics[height=7cm,width=1cm]{61.png}
 	\end{figure}
-	\section{Conclusion}
+
     \end{document}

@@ -291,7 +291,7 @@ from student
 where DEPART!='11' and DEPART!='229';
 
 -- 20
-select teacher.Tno,teacher.NAME
+select distinct teacher.Tno,teacher.NAME
 from score,course,teacher
 where course.CNO=score.CNO and course.TNO=teacher.TNO and score.SNO='PB22061161';
 
@@ -336,19 +336,20 @@ where score.CNO=course.CNO and course.NAME='Linear_Algebra'
 order by score.DEGREE desc;
 
 -- 27
-select distinct score.CNO, course.NAME, avg(score.DEGREE) as ave_degree
-from score, course
-where score.CNO=course.CNO
-group by score.CNO;
+select distinct course.CNO, course.NAME, avg(score.DEGREE) as ave_degree
+from course left join score
+on score.CNO=course.CNO
+group by course.CNO;
 
 -- 28
-select distinct score.CNO, course.NAME, avg(score.DEGREE) as ave_degree
-from score, course
-where score.CNO=course.CNO and course.TYPE=1
-group by score.CNO;
+select distinct course.CNO, course.NAME, avg(score.DEGREE) as ave_degree
+from course left join score
+on score.CNO=course.CNO
+where course.TYPE=1
+group by course.CNO;
 
 -- 29
-select distinct student.SNO, student.NAME
+select distinct student.SNO
 from student
 where not exists
 	(select *
@@ -365,10 +366,10 @@ where score.CNO=course.CNO
 group by course.CNO;
 
 -- 31
-select CNO, count(CNO) as num
+select SNO, count(CNO) as num
 from score
 where DEGREE<75
-group by CNO;
+group by SNO;
 
 -- 32
 select distinct teacher.TNO, teacher.NAME
@@ -378,16 +379,17 @@ where teacher.TNO=course.TNO
     select * 
     from score
     where course.CNO=score.CNO and score.DEGREE<75);
-
+   
 -- 33
 select student.SNO, student.NAME
-from student, score
-where student.SNO=score.SNO 
-group by score.SNO
+from student
+left join score
+on student.SNO=score.SNO 
+group by student.SNO
 having count(score.SNO)<2;
 
 -- 34
-select distinct student.SNO, student.NAME
+select distinct student.SNO
 from student
 where not exists
 	(select *
@@ -407,9 +409,9 @@ where score1.SNO='PB210000025';
 
 -- 35
 select distinct course.NAME, avg(score.DEGREE) as ave_degree
-from score
-left join course on score.CNO=course.CNO
-group by score.CNO;
+from course
+left join score on score.CNO=course.CNO
+group by course.CNO;
 
 -- 36
 select student.DEPART, count(distinct student.SNO) as num_student,
@@ -433,12 +435,6 @@ left join course
 on course.CNO=score.CNO
 group by course.NAME;
 
--- 38(2)
-select course.NAME, min(year(current_date())-year(student.BITHDAY)) as Minage,  max(year(current_date())-year(student.BITHDAY)) as Maxage, avg(year(current_date())-year(student.BITHDAY)) as aveage
-from score, student, course 
-where score.SNO=student.SNO and course.CNO=score.CNO
-group by course.NAME;
-
 -- 39
 select student.SNO, student.NAME
 from score, student, course 
@@ -449,6 +445,7 @@ select score1.*
 from score score1
 where abs((select avg(DEGREE) from score where CNO=score1.CNO) - score1.DEGREE) <= 12;
 
+-- 视图
 -- 41
 create view db_229_student as
 select *
@@ -493,7 +490,6 @@ create table teacher_sal
 	(TNO char(7) primary key,  
 	 SAL float
 	);
-select * from teacher_sal;
 
 -- 48
 DELIMITER //
@@ -575,7 +571,7 @@ end;
 //
 DELIMITER ;
 
-show create trigger update_sal;
+show create trigger insert2_sal;
 
 insert into teacher_sal (TNO, SAL)
 values
@@ -614,6 +610,8 @@ begin
 end;
 //
 DELIMITER ;
+
+show create trigger update2_sal;
 
 update teacher_sal
 set SAl = '6500'
@@ -659,12 +657,15 @@ where CNO in
 select SNO, DEGREE 
 from score
 order by DEGREE;
+
+-- 开放题
 -- 52
 -- 查询每个学生的选课数量
-select student.SNO, student.NAME, count(*) as num
-from student, score
-where student.SNO = score.Sno
-group by score.Sno;
+select student.SNO, student.NAME, count(score.DEGREE) as num
+from student
+left join score
+on student.SNO = score.SNO
+group by student.Sno;
 
 -- 53
 -- 查询没有选GMH选过的任意一门课的学生名字
