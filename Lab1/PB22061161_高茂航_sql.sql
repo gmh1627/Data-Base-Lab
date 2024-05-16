@@ -1,3 +1,4 @@
+-- Active: 1715863622316@@127.0.0.1@3306
 create schema s_t_c_s;  
 create table student  
 	(SNO char(11) primary key,  
@@ -6,7 +7,9 @@ create table student
      BIRTHDAY datetime,  
      DEPART int  
 	);  
-  
+
+USE s_t_c_s;
+
 insert into student (SNO, NAME, GENDER, BIRTHDAY, DEPART)  
 values
 ('PB210000001', 'YH', 'male', '2002-03-29 00:00:00', 229),
