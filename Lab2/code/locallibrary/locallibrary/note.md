@@ -1,0 +1,1 @@
+variables are enclosed in double braces ({{ num_books }}), and tags are enclosed in single braces with percentage signs ("{% extends 'base_generic.html' %}")
