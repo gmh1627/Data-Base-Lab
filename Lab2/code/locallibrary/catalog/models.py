@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import date
+
 
 # Create your models here.
 class Genre(models.Model):
@@ -50,6 +52,7 @@ class Book(models.Model):
 
     
 import uuid # Required for unique book instances
+from django.conf import settings
 
 class BookInstance(models.Model):
     """
@@ -59,6 +62,7 @@ class BookInstance(models.Model):
     book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
+    borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     LOAN_STATUS = (
         ('m', 'Maintenance'),
@@ -100,3 +104,9 @@ class Author(models.Model):
         String for representing the Model object.
         """
         return '%s, %s' % (self.last_name, self.first_name)
+
+
+@property
+def is_overdue(self):
+    """Determines if the book is overdue based on due date and current date."""
+    return bool(self.due_back and date.today() > self.due_back)

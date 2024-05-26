@@ -1,0 +1,177 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="shortcut icon" href="static/book.png">
+    <title>首页</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+    $(function (){
+        $("#open_log_in").click(function(){
+            $("#log_in_box").slideDown();
+        });
+        $("#not_log_in").click(function(){
+            $("#log_in_box").slideUp();
+        });
+        $("#open_regist").click(function(){
+            $("#regist_box").slideDown();
+        });
+        $("#not_regist").click(function(){
+            $("#regist_box").slideUp();
+        });
+        $("#borrow").click(function(){
+            alert("请先登录再尝试借阅或预约图书！")
+        });
+        $("#reserve").click(function(){
+            alert("请先登录再尝试借阅或预约图书！")
+        });
+    });
+    </script>
+</head>
+
+{% if status == 1 %} <!-- applicant == true -->
+    <script>
+        alert("完成申请，请等待管理员电话联系获得ID！") 
+    </script>
+{% elif status == -1 %} <!-- password_check == false -->
+    <script>
+        alert("ID或密码错误，请重新输入！") 
+    </script>
+{% elif status == -2 %} <!-- phone_check == false -->
+    <script>
+        alert("请输入规范的电话号码！")
+    </script>
+{% elif status == -3 %} <!-- two_passwd_check == false -->
+    <script>
+        alert("两次输入密码不一致！")
+    </script>
+{% elif status == -4 %} <!-- name_check == false -->
+    <script>
+        alert("用户名已存在，请重新输入。")
+    </script>
+{% endif %}
+
+<body>
+    <div id="header">
+        <p class="note" style="padding-right:20px; width:1000px; position:absolute;">
+            <button id="open_log_in">登录</button>
+        </p>
+        <h1 style="text-align:center;">欢迎来到 Witness 图书馆！</h1>
+        <p style="text-align:right;">
+            <form method="post" style="float:left">
+                <input type="submit" name="back" value="回到首页">
+            </form>
+            <form method="post" style="float:left">
+                <input type="submit" name="search" value="搜索">
+                <input type="text" name="bookname" placeholder="输入检索内容" required>
+            </form>
+
+            <form method="post" style="float:right">
+                当前第 {{page}} 页
+                <input type="submit" name="page+" value="下页">
+            </form>
+            <form method="post" style="float:right">
+                <input type="submit" name="page-" value="上页">
+            </form>
+        </p>
+    </div>
+
+    <div id="log_in_box">
+        <div id="log_in">
+            <p class="note" style="padding-right: 20px">
+                <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_log_in">取消</button>
+            </p>
+            <h2 style="text-align:center;">登录</h2>
+                <form method="post">
+                <p>
+                    <label for="user_type">类型：</label>
+                    <select id="user_type" name="user_type">
+                        <option value="reader">读者</option>
+                        <option value="admin">管理员</option>
+                        <option value="root">Root</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="user_id">ID：</label>
+                    <input type="text" name="user_id" id="user_id" required>
+                </p>
+                <p>
+                    <label for="password">密码：</label>
+                    <input type="password" name="password" id="password" required>
+                </p>
+                <p class="do">
+                    <input type="submit" name="logging_in" value="一键登录">
+                </p>
+            </form>
+            <form method="post" class="note">
+                <input type="submit" name="forgot" value="忘记密码">
+            </form>
+            <p class="note" >
+                <button id="open_regist">没有账号？点击注册</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="regist_box"><div id="regist">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_regist">取消</button>
+        </p>
+        <h2 style="text-align:center">欢迎加入我们</h2>
+        <form method="post">
+            <p>
+                <label for="user_type">类型：</label>
+                <select id="user_type" name="user_type">
+                    <option value="reader">读者</option>
+                    <option value="admin">管理员</option>
+                </select>
+            </p>
+            <p>
+                <label for="username">用户名：</label>
+                <input type="text" name="username" id="username" required>
+            </p>
+            <p>
+                <label for="sex">性别：</label>
+                <select id="sex" name="sex">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                    <option value="？">？</option>
+                </select>
+            </p>
+            <p>
+                <label for="phone">电话</label>
+                <input type="tel" name="phone" id="phone" required>
+            </p>
+            <p>
+                <label for="password">输入密码：</label>
+                <input type="password" name="password" id="password" required>
+            </p>
+            <p>
+                <label for="confirm_password">确认密码：</label>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+            </p>
+            <p>
+                <input type="submit" name="register" value="注册">
+            </p>
+        </form>
+    </div></div>
+        
+    <div id="mainpart">
+            {% for book in books %}
+            <div class="books">
+                <img src="{{ book[11] }}" style="width:150px; float:left">
+                <div style="margin-left:175px">
+                    <p style="text-align:center">《{{ book[1] }}》</p>
+                    <p style="text-align:center">{{ book[2] }}著，{{ book[4] }}</p>
+                    <p>简介：{{ book[5] }}</p>               
+                    <p>剩余数量：{{ book[9] }}/{{ book[8] }}，共被借阅{{ book[10] }}次</p>
+                    <p class="note">{{ book[7] }}出版，出版日期{{ book[6] }}</p>
+                    <p class="note">建议定价：{{ book[3] }}元</p>
+                    <p class="note">
+                        <button id="reserve">预约</button>
+                        <button id="borrow">借阅</button>
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+
+</body>

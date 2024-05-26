@@ -1,0 +1,42 @@
+<!doctype html>
+<head>   
+  <link rel="stylesheet" type="text/css" href="static/style.css">
+  <link rel="shortcut icon" href="static/book.png">
+  <title>管理员</title>
+</head>
+
+{% block contentBlock %}
+{% if status == -1 %} <!-- 忘记密码 或 权限有疑问 -->
+    <script>
+        alert("请电话联系管理员") 
+    </script>
+{% endif %}
+{% endblock %}
+
+<body>
+  <div id="header">
+    <p style="position: absolute;">
+      <a href=" {{url_for('index', page=0, search='',status=0)}} ">回到首页</a>
+    </p>
+    <h1 style="text-align:center;">Our Admins</h1>
+    <h1 style="text-align:center;">管理员列表</h1>
+  </div>
+    <div id="mainpart">
+        <table>
+            <tr>
+              <th>ID</th>
+              <th>用户名</th>
+              <th>性别</th>
+              <th>电话号码</th>
+            </tr>
+            {% for admin in admins %}
+            <tr>
+              <td>{{ admin[0] }}</td>
+              <td>{{ admin[1] }}</td>
+              <td>{{ admin[2] }}</td>
+              <td>{{ admin[3] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+</body>

@@ -1,0 +1,141 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="shortcut icon" href="static/book.png">
+    <title>书籍操作</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(function (){
+
+        });
+    </script>
+</head>
+
+{% if message == -1 %}
+<script>
+    alert("已在借阅中！")
+</script>
+{% elif message == -2 %}
+<script>
+    alert("已在预约中！")
+</script>
+{% elif message == -3 %}
+<script>
+    alert("抱歉，图书近期已全部被占用。")
+</script>
+{% endif %}
+
+<body>
+    <div id="header">
+      <h1 style="text-align:center;">{{ user[1] }}，欢迎进入图书操作模式</h1>
+      <p style="text-align:right;">
+          <form method="post" style="float:left">
+              <input type="submit" name="back" value="回到首页">
+          </form>
+      </p>
+    </div>
+
+    <div id="mainpart">
+        {% if real != 0 %}
+        <div>
+            <p>当前图书ID：{{ info[0] }}</p>
+            <p>状态：
+                {% if real == 1 or real == 2 %}
+                    未预约/借阅
+                {% elif real == 3 %}
+                    正在借阅中
+                {% elif real == 4 %}
+                    正在预约中
+                {% endif %}
+            </p>
+            <p>
+                {% if real == 1 %}
+                <form method="POST">
+                    输入天数[最大30]：<input type="number" name="days" required>
+                    <button type="submit" name="borrow">借阅</button>
+                </form>
+                {% elif real == 2 %}
+                <form method="POST">
+                    预计 {{ info[1] }} 天后得书，输入预计借阅天数[最大30]：<input type="number" name="days" required>
+                    <button type="submit" name="reserve">预约</button>
+                </form>
+                {% elif real == 3 %}
+                    {% if info[1] != 0 %}
+                    <form method="POST">
+                        输入续借天数[最大10]：<input type="number" name="days" required>
+                        <button type="submit" name="renew">续借</button>
+                    </form>
+                    <form method="POST">
+                        或现在
+                        <button type="submit" name="return">还书</button>
+                    </form>
+                    {% else %}
+                    <form method="POST">
+                        没有续借空闲，
+                        <button type="submit" name="return">点击还书</button>
+                    </form>
+                    {% endif %}
+                {% elif real == 4 %}
+                <form method="POST">
+                    <button type="submit" name="not_reserve">取消预约</button>
+                </form>
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+
+            <table>
+                <caption>当前预约</caption>
+                <tr>
+                    <th>图书ID</th>
+                    <th>书名</th>
+                    <th>预约取书时间</th>
+                    <th>预计还书时间</th>
+                    <th></th>
+                </tr>
+                
+                {% for reserve in reserves %}
+                <tr>
+                    <td>{{ reserve[0] }}</td>
+                    <td>{{ reserve[1] }}</td>
+                    <td>{{ reserve[2] }}</td>
+                    <td>{{ reserve[3] }}</td>
+                    <td>
+                        <form method="POST">
+                            <button type="submit" name="see_or_not_reserve" value="{{ reserve[0] }}">取消预约</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+            </table>
+            <table>
+                <caption>当前借阅</caption>
+                <tr>
+                    <th>图书ID</th>
+                    <th>书名</th>
+                    <th>借阅时间</th>
+                    <th>应还时间</th>
+                    <th>已续借次数</th>
+                    <th></th>
+                </tr>
+                {% for borrow in borrows %}
+                <tr>
+                    <td>{{ borrow[0] }}</td>
+                    <td>{{ borrow[1] }}</td>
+                    <td>{{ borrow[2] }}</td>
+                    <td>{{ borrow[3] }}</td>
+                    <td>{{ borrow[4] }}</td>
+                    <td>
+                        <form method="POST">
+                            <button type="submit" name="renew_or_return" value="{{ borrow[0] }}">续借/还书</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+            </table>
+
+    </div>
+    
+</body>

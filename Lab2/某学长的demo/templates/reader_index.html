@@ -1,0 +1,186 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="shortcut icon" href="static/book.png">
+    <title>首页</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(function (){
+            $("#log_out").click(function(){
+                $("#log_out_box").slideDown();
+            });
+            $("#not_log_out").click(function(){
+                $("#log_out_box").slideUp();
+            });
+            $("#open_info").click(function(){
+                $("#info_box").slideDown();
+            });
+            $("#close_info").click(function(){
+                $("#info_box").slideUp();
+            });
+            $("#open_change_info").click(function(){
+                $("#change_box").slideDown();
+            });
+            $("#not_change_info").click(function(){
+                $("#change_box").slideUp();
+            });
+            $("#open_br").click(function(){
+                $("#br_box").slideDown();
+            });
+            $("#not_br").click(function(){
+                $("#br_box").slideUp();
+            });
+        });
+    </script>
+  </head>
+
+{% if status == 1 %} <!-- register_suc == true -->
+    <script>
+        alert("注册成功！您的ID为{{ user[0] }}，请记住以用于后续登录。")
+    </script>
+{% elif status == 2 %} <!-- 修改个人信息 -->
+    <script>
+        alert("个人信息修改成功！")
+    </script>
+{% elif status == 3 %} <!-- 图书操作 -->
+<script>
+    alert("操作成功！")
+</script>
+{% elif status == -1 %} <!-- password_check == false -->
+    <script>
+        alert("旧密码错误，请重新输入。") 
+    </script>
+{% elif status == -2 %} <!-- phone_check == false -->
+    <script>
+        alert("请输入规范的电话号码！")
+    </script>
+{% elif status == -3 %} <!-- two_passwd_check == false -->
+    <script>
+        alert("两次输入密码不一致！")
+    </script>
+{% elif status == -4 %} <!-- name_check == false -->
+    <script>
+        alert("用户名已存在，请重新输入。")
+    </script>
+{% elif status == -5 %} <!-- len(borrow) == 0 -->
+    <script>
+        alert("没有正在预约或借阅的图书！")
+    </script>
+{% elif status == -6 %} <!-- 权限不足 -->
+    <script>
+        alert("权限不足！")
+    </script>
+{% elif status == -7 %} <!-- 库存不足 -->
+    <script>
+        alert("库存不足，请点击预约！")
+    </script>
+{% elif status == -8 %} <!-- 直接借阅 -->
+    <script>
+        alert("库存充足，请直接借阅！")
+    </script>
+{% endif %}
+
+<body>
+    <div id="header">
+        <p class="note" style="padding-right:20px; width:1000px; position:absolute">
+            <button id="open_info">个人信息</button>
+            <button id="open_br">预约/借阅情况</button>
+            <button id="log_out">退出登录</button>
+        </p>
+      <h1 style="text-align:center;">欢迎回来，{{ user[1] }}</h1>
+      <p style="text-align:right;">
+          <form method="post" style="float:left">
+              <input type="submit" name="back" value="回到首页">
+          </form>
+          <form method="post" style="float:left">
+              <input type="submit" name="search" value="搜索">
+              <input type="text" name="bookname" placeholder="输入检索内容" required>
+          </form>
+    
+          <form method="post" style="float:right">
+              当前第 {{page}} 页
+              <input type="submit" name="page+" value="下页">
+          </form>
+          <form method="post" style="float:right">
+              <input type="submit" name="page-" value="上页">
+          </form>
+      </p>
+    </div>
+    
+    <div id="log_out_box"><div id="logging_out">
+        <h3>确定要退出吗？</h3>
+        <button id="not_log_out">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="log_out" value="是">
+        </form>
+    </div></div>
+
+    <div id="info_box"><div id="info">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="close_info">返回</button>
+        </p>
+        <h3>[{{ user[0] }}] {{ user[1] }}</h3>
+        <p>性别：{{ user[2] }}</p>
+        <p>电话：{{ user[3] }}</p>
+        <p>权限*：{{ user[4]}}</p>
+        <p>违约金已支付/总额：{{ user[6] }} / {{ user[5] }}</p>
+        <p class="note"><button id="open_change_info">修改个人信息</button></p>
+        <p class="note">*权限为0表示正常，1表示不允许预约/续借，2表示不允许借阅/预约/续借，如有疑问请<a href="{{ url_for('admin_num', status = -1) }}">联系管理员</a></p>
+    </div></div>
+
+    <div id="change_box"><div id="change">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_change_info">取消</button>
+        </p>
+        <h2 style="text-align:center">个人信息修改</h2>
+        <form method="post">
+            <p>新用户名：<input type="text" name="newname" id="newname" required><input type="submit" name="name" value="修改用户名"></p>
+        </form>
+        <form method="post">
+            <p>新的电话号码：<input type="tel" name="newphone" id="newphone" required><input type="submit" name="phone" value="修改电话"></p>
+        </form>
+        <form method="post">
+            <p>请输入原密码：<input type="password" name="old_pwd" id="old_pwd" required></p>
+            <p>请输入新密码：<input type="password" name="new_pwd" id="new_pwd" required></p>
+            <p>再次确认密码：<input type="password" name="confirm_pwd" id="confirm_pwd" required></p>
+            <p><input type="submit" name="pwd" value="修改密码"></p>
+        </form>
+    </div></div>
+
+    <div id="br_box"><div id="br">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_br">取消</button>
+        </p>
+        <h3>借阅信息</h3>
+        <p>当前借阅本数：{{ borrow }}</p>
+        <p>当前预约本数：{{ reserve }}</p>
+        <form method="post">
+            <input type="submit" name="re" value="查看情况"></p>
+        </form>
+    </div></div>
+
+    <div id="mainpart">
+          {% for book in books %}
+          <div class="books">
+              <img src="{{ book[11] }}" style="width:150px; float:left">
+              <div style="margin-left:175px">
+                  <p style="text-align:center">《{{ book[1] }}》</p>
+                  <p style="text-align:center">{{ book[2] }}著，{{ book[4] }}</p>
+                  <p>简介：{{ book[5] }}</p>               
+                  <p>剩余数量：{{ book[9] }}/{{ book[8] }}，共被借阅{{ book[10] }}次</p>
+                  <p class="note">{{ book[7] }}出版，出版日期{{ book[6] }}</p>
+                  <p class="note">建议定价：{{ book[3] }}元</p>
+                    <form method="post" style="float:right">
+                      <input type="hidden" name="book" value="{{ book[0] }}">
+                      <input type="submit" name="borrow" value="借阅">
+                    </form>
+                    <form method="post" style="float:right">
+                      <input type="hidden" name="book" value="{{ book[0] }}">
+                      <input type="submit" name="reserve" value="预约">
+                    </form>
+                  </p>
+              </div>
+          </div>
+          {% endfor %}
+    </div>
+</body>

@@ -1,0 +1,159 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="shortcut icon" href="static/book.png">
+    <title>用户管理</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(function (){
+            $("#log_out").click(function(){
+                $("#log_out_box").slideDown();
+            });
+            $("#not_log_out").click(function(){
+                $("#log_out_box").slideUp();
+            });
+            $("#open_book").click(function(){
+                $("#book_box").slideDown();
+            });
+            $("#not_book").click(function(){
+                $("#book_box").slideUp();
+            });
+            $("#open_black").click(function(){
+                $("#black_box").slideDown();
+            });
+            $("#not_black").click(function(){
+                $("#black_box").slideUp();
+            });
+            setTimeout('$("#detail_box").slideDown()', 100)
+            $("#not_detail").click(function(){
+                $("#detail_box").slideUp();
+            });
+        });
+    </script>
+</head>
+
+{% if status == 2 %} <!-- 加入黑名单 -->
+    <script>
+        alert("加入黑名单成功！")
+    </script>
+{% endif %}
+
+<body>
+    <div id="header">
+        <p class="note" style="padding-right:20px; width:1000px; position:absolute">
+            <button id="open_book">图书管理</button>
+            <button id="log_out">退出登录</button>
+        </p>
+      <h1 style="text-align:center;">欢迎回来，管理员{{ user[1] }}</h1>
+      <p style="text-align:right;">
+          <form method="post" style="float:left">
+              <input type="submit" name="back" value="回到首页">
+          </form>
+          <form method="post" style="float:left">
+              <input type="submit" name="search" value="搜索用户">
+              <input type="text" name="readername" placeholder="输入检索内容" required>
+          </form>
+      </p>
+    </div>
+
+    <div id="log_out_box"><div id="logging_out">
+        <h3>确定要退出吗？</h3>
+        <button id="not_log_out">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="log_out" value="是">
+        </form>
+    </div></div>
+
+    <div id="book_box"><div id="book">
+        <h3>要进入图书管理吗？</h3>
+        <button id="not_book">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="goto_book" value="是">
+        </form>
+    </div></div>
+
+    <div id="black_box"><div id="black">
+        <h3>将用户{{ reader_id }}加入黑名单？</h3>
+        <button id="not_black">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="black" value="是">
+        </form>
+    </div></div>
+
+    <div id="mainpart">
+        {% if status == 1 %} <!-- 展示详情浮窗 -->
+        <div id="detail_box">
+            <p class="note" style="padding-right: 20px">
+                <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_detail">关闭</button>
+            </p>
+            <h1>用户ID：{{ reader_id }}</h1>
+            <table>
+                <caption>当前预约</caption>
+                <tr>
+                    <th>图书ID</th>
+                    <th>书名</th>
+                    <th>预约取书时间</th>
+                    <th>预计还书时间</th>
+                </tr>
+                {% for reserve in reserves %}
+                <tr>
+                    <td>{{ reserve[0] }}</td>
+                    <td>{{ reserve[1] }}</td>
+                    <td>{{ reserve[2] }}</td>
+                    <td>{{ reserve[3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <table>
+                <caption>当前借阅</caption>
+                <tr>
+                    <th>图书ID</th>
+                    <th>书名</th>
+                    <th>借阅时间</th>
+                    <th>应还时间</th>
+                    <th>已续借次数</th>
+                </tr>
+                {% for borrow in borrows %}
+                <tr>
+                    <td>{{ borrow[0] }}</td>
+                    <td>{{ borrow[1] }}</td>
+                    <td>{{ borrow[2] }}</td>
+                    <td>{{ borrow[3] }}</td>
+                    <td>{{ borrow[4] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <p style="text-align:right"><button id="open_black">加入黑名单(禁止借阅、预约、续借)</button></p>
+        </div>
+        {% endif %}
+        <table>
+            <caption>用户列表</caption>
+            <tr>
+                <th>ID</th>
+                <th>用户名</th>
+                <th>性别</th>
+                <th>电话</th>
+                <th>权限</th>
+                <th>违约金情况</th>
+                <th>密码</th>
+                <th></th>
+            </tr>
+            {% for reader in readers %}
+            <tr>
+                <td>{{ reader[0] }}</td>
+                <td>{{ reader[1] }}</td>
+                <td>{{ reader[2] }}</td>
+                <td>{{ reader[3] }}</td>
+                <td>{{ reader[4] }}</td>
+                <td>{{ reader[6] }}/{{ reader[5] }}</td>
+                <td>{{ reader[7] }}</td>
+                <td><form method="post">
+                    <input type="hidden" name="reader" value="{{ reader[0] }}">
+                    <input type="submit" name="detail" value="查看详情">
+                  </form></td>
+            </tr>
+            {% endfor %}
+          </table>
+    </div>
+    
+</body>

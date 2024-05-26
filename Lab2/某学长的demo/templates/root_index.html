@@ -1,0 +1,93 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="shortcut icon" href="static/book.png">
+    <title>首页</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(function (){
+            $("#log_out").click(function(){
+                $("#log_out_box").slideDown();
+            });
+            $("#not_log_out").click(function(){
+                $("#log_out_box").slideUp();
+            });
+            $("#open_time").click(function(){
+                $("#time_box").slideDown();
+            });
+            $("#close_time").click(function(){
+                $("#time_box").slideUp();
+            });
+        });
+    </script>
+</head>
+
+{% if status == 1 %} <!-- 接受成功 -->
+<script>
+    alert("已接受申请！")
+</script>
+{% elif status == -1 %} <!-- 拒绝成功 -->
+<script>
+    alert("已拒绝申请！")
+</script>
+{% endif %}
+
+<body>
+    <div id="header">
+        <p class="note" style="padding-right:20px; width:1000px; position:absolute">
+            <button id="log_out">退出登录</button>
+        </p>
+      <h1 style="text-align:center;">欢迎回来，总管理员。</h1>
+      <p>
+        当前时间：第 {{ date }}天 <button id="open_time">前进一天</button>
+      </p>
+    </div>
+
+    <div id="log_out_box"><div id="logging_out">
+        <h3>确定要退出吗？</h3>
+        <button id="not_log_out">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="log_out" value="是">
+        </form>
+    </div></div>
+
+    <div id="time_box"><div id="time">
+        <h3>确定要增加时间吗？</h3>
+        <button id="close_time">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="time+" value="是">
+        </form>
+    </div></div>
+
+    <div id="mainpart">
+        <table>
+            <caption>管理员申请列表</caption>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>性别</th>
+                <th>电话</th>
+                <th></th>
+                <th></th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user[0] }}</td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td>{{ user[3] }}</td>
+                <td>
+                    <form method="POST">
+                        <button type="submit" name="approve" value="{{ user[0] }}">批准申请</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST">
+                        <button type="submit" name="reject" value="{{ user[0] }}">拒绝申请</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+          </table>
+    </div>
+</body>

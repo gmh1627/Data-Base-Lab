@@ -1,0 +1,252 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="shortcut icon" href="static/book.png">
+    <title>首页</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(function (){
+            $("#log_out").click(function(){
+                $("#log_out_box").slideDown();
+            });
+            $("#not_log_out").click(function(){
+                $("#log_out_box").slideUp();
+            });
+            $("#open_info").click(function(){
+                $("#info_box").slideDown();
+            });
+            $("#close_info").click(function(){
+                $("#info_box").slideUp();
+            });
+            $("#open_change_info").click(function(){
+                $("#change_box").slideDown();
+            });
+            $("#not_change_info").click(function(){
+                $("#change_box").slideUp();
+            });
+            $("#open_insert_book").click(function(){
+                $("#insert_book_box").slideDown();
+            });
+            $("#not_insert_book").click(function(){
+                $("#insert_book_box").slideUp();
+            });
+            $("#open_user").click(function(){
+                $("#user_box").slideDown();
+            });
+            $("#not_user").click(function(){
+                $("#user_box").slideUp();
+            });
+            setTimeout('$("#change_book_box").slideDown()', 100)
+            $("#not_change_book").click(function(){
+                $("#change_book_box").slideUp();
+            });
+        });
+    </script>
+  </head>
+
+{% if status == 4 %} <!-- 插入图书 -->
+    <script>
+        alert("插入图书成功！")
+    </script>
+{% elif status == 3 %} <!-- 修改图书信息 -->
+    <script>
+        alert("图书信息修改成功！")
+    </script>
+{% elif status == 2 %} <!-- 修改个人信息 -->
+    <script>
+        alert("个人信息修改成功！")
+    </script>
+{% elif status == -1 %} <!-- password_check == false -->
+    <script>
+        alert("旧密码错误，请重新输入。") 
+    </script>
+{% elif status == -2 %} <!-- phone_check == false -->
+    <script>
+        alert("请输入规范的电话号码！")
+    </script>
+{% elif status == -3 %} <!-- two_passwd_check == false -->
+    <script>
+        alert("两次输入密码不一致！")
+    </script>
+{% elif status == -4 %} <!-- name_check == false -->
+    <script>
+        alert("用户名已存在，请重新输入。")
+    </script>
+{% elif status == -5 %} <!-- 修改图书信息失败 -->
+    <script>
+        alert("修改图书信息失败，请检查输入。")
+    </script>
+{% elif status == -6 %} <!-- 插入图书败 -->
+<script>
+    alert("插入图书失败，请检查输入。")
+</script>
+{% endif %}
+
+<body>
+    <div id="header">
+        <p class="note" style="padding-right:20px; width:1000px; position:absolute">
+            <button id="open_info">个人信息</button>
+            <button id="open_user">用户管理</button>
+            <button id="log_out">退出登录</button>
+        </p>
+      <h1 style="text-align:center;">欢迎回来，管理员{{ user[1] }}</h1>
+      <p style="text-align:right;">
+          <form method="post" style="float:left">
+              <input type="submit" name="back" value="回到首页">
+          </form>
+          <form method="post" style="float:left">
+              <input type="submit" name="search" value="搜索">
+              <input type="text" name="bookname" placeholder="输入检索内容" required>
+          </form>
+          <button style="float:left" id="open_insert_book">增添图书</button>
+    
+          <form method="post" style="float:right">
+              当前第 {{page}} 页
+              <input type="submit" name="page+" value="下页">
+          </form>
+          <form method="post" style="float:right">
+              <input type="submit" name="page-" value="上页">
+          </form>
+      </p>
+    </div>
+    
+    <div id="log_out_box"><div id="logging_out">
+        <h3>确定要退出吗？</h3>
+        <button id="not_log_out">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="log_out" value="是">
+        </form>
+    </div></div>
+
+    <div id="user_box"><div id="user">
+        <h3>要进入用户管理吗？</h3>
+        <button id="not_user">否</button>
+        <form method="post" style="float:right">
+            <input type="submit" name="goto_user" value="是">
+        </form>
+    </div></div>
+
+    <div id="info_box"><div id="info" style="height:180px">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="close_info">返回</button>
+        </p>
+        <h3>[{{ user[0] }}] {{ user[1] }}</h3>
+        <p>性别：{{ user[2] }}</p>
+        <p>电话：{{ user[3] }}</p>
+        <p class="note"><button id="open_change_info">修改个人信息</button></p>
+    </div></div>
+
+    <div id="change_box"><div id="change">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_change_info">取消</button>
+        </p>
+        <h2 style="text-align:center">个人信息修改</h2>
+        <form method="post">
+            <p>新用户名：<input type="text" name="newname" id="newname" required><input type="submit" name="name" value="修改用户名"></p>
+        </form>
+        <form method="post">
+            <p>新的电话号码：<input type="tel" name="newphone" id="newphone" required><input type="submit" name="phone" value="修改电话"></p>
+        </form>
+        <form method="post">
+            <p>请输入原密码：<input type="password" name="old_pwd" id="old_pwd" required></p>
+            <p>请输入新密码：<input type="password" name="new_pwd" id="new_pwd" required></p>
+            <p>再次确认密码：<input type="password" name="confirm_pwd" id="confirm_pwd" required></p>
+            <p><input type="submit" name="pwd" value="修改密码"></p>
+        </form>
+    </div></div>
+
+    {% if status == 1 %} <!-- 展示修改信息浮窗 -->
+    <div id="change_book_box"><div id="change_book">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_change_book">取消</button>
+        </p>
+        <h3 style="text-align:center">《 {{ bookname }} 》信息修改</h3>
+        <form method="post">
+            <p>新书名：
+            <input type="text" name="newname" required>
+            <input type="submit" name="book_name" value="修改书名"></p>
+        </form>
+        <form method="post" enctype="multipart/form-data">
+            <p>上传新的封面：
+            <input type="file" name="newimg" required>
+            <input type="submit" name="img" value="修改封面"></p>
+        </form>
+        <form method="post">
+            <p>新作者：
+            <input type="text" name="newnauthor" required>
+            <input type="submit" name="author" value="修改作者"></p>
+        </form>
+        <form method="post">
+            <p>新价格：
+            <input type="text" name="newprice" required>
+            <input type="submit" name="price" value="修改价格"></p>
+        </form>
+        <form method="post">
+            <p>新类型：
+            <input type="text" name="newtype" id="newtype" required>
+            <input type="submit" name="type" value="修改类型"></p>
+        </form>
+        <form method="post">
+            <p>新简介：
+            <input type="text" name="newbrief" required>
+            <input type="submit" name="brief" value="修改简介"></p>
+        </form>
+        <form method="post">
+            <p>新出版日期[yyyy-mm-dd]：
+            <input type="text" name="newpd" required>
+            <input type="submit" name="pd" value="修改出版日期"></p>
+        </form>
+        <form method="post">
+            <p>新出版社：
+            <input type="text" name="newpress" required>
+            <input type="submit" name="press" value="修改出版社"></p>
+        </form>
+        <form method="post">
+            <p>新增藏书*：
+            <input type="number" name="newstore" required>
+            <input type="submit" name="store" value="增加数目"></p>
+        </form>
+        <p class="note">*输入负数代表减少，不能低于已被借走数目</p>
+    </div></div>
+    {% endif %}
+
+    <div id="insert_book_box"><div id="insert_book">
+        <p class="note" style="padding-right: 20px">
+            <button style="position:absolute; background-color:rgba(255,255,255,0.1)" id="not_insert_book">取消</button>
+        </p>
+        <h2 style="text-align:center">增添图书</h2>
+        <form method="post" enctype="multipart/form-data">
+            <p>书名：<input type="text" name="newname" required></p>
+            <p>封面：<input type="file" name="newimg" required></p>
+            <p>作者：<input type="text" name="newauthor" required></p>
+            <p>价格：<input type="text" name="newprice" required></p>
+            <p>类型：<input type="text" name="newtype" required></p>
+            <p>简介：<input type="text" name="newbrief" required></p>
+            <p>出版日期[yyyy-mm-dd]：<input type="text" name="newpd" required></p>
+            <p>出版社：<input type="text" name="newpress" required></p>
+            <p>数目：<input type="text" name="newstore" required></p>
+            <p><input type="submit" name="insert" value="确认添加"></p>
+        </form>
+    </div></div>
+
+    <div id="mainpart">
+          {% for book in books %}
+          <div class="books">
+              <img src="{{ book[11] }}" style="width:150px; float:left">
+              <div style="margin-left:175px">
+                  <p style="text-align:center">《{{ book[1] }}》</p>
+                  <p style="text-align:center">{{ book[2] }}著，{{ book[4] }}</p>
+                  <p>简介：{{ book[5] }}</p>               
+                  <p>剩余数量：{{ book[9] }}/{{ book[8] }}，共被借阅{{ book[10] }}次</p>
+                  <p class="note">{{ book[7] }}出版，出版日期{{ book[6] }}</p>
+                  <p class="note">建议定价：{{ book[3] }}元</p>
+                    <form method="post" style="float:right">
+                      <input type="hidden" name="book" value="{{ book[0] }}">
+                      <input type="submit" name="modify" value="信息修改">
+                    </form>
+                  </p>
+              </div>
+          </div>
+          {% endfor %}
+    </div>
+</body>
