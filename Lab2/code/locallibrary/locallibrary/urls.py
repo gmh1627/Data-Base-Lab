@@ -16,14 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+'''
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    #path('accounts/login/', auth_views.LoginView.as_view(), name='accounts_login'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('catalog/', include('catalog.urls')),
+    path('', RedirectView.as_view(url='/catalog/')),
+    path('register/', include('catalog.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+'''
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
 # Use include() to add paths from the catalog application
 from django.conf.urls import include
-from django.urls import path
 
 urlpatterns += [
     path('catalog/', include('catalog.urls')),
