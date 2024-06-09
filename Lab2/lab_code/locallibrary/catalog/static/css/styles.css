@@ -1,6 +1,93 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+/* Sidebar styles */
 .sidebar-nav {
-    margin-top: 20px;
-    padding: 0;
-    list-style: none;
-  }
-  
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-nav li {
+  padding: 10px;
+  font-size: 16px;
+}
+
+.sidebar-nav li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.sidebar-nav li a:hover {
+  background-color: #007bff;
+  color: #fff;
+  padding-left: 15px;
+}
+
+.sidebar-nav li a.active {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+/* Container styles */
+.container-fluid {
+  padding: 20px;
+}
+
+/* Content area styles */
+.col-sm-10 {
+  padding: 20px;
+  background-color: #fff;
+  border-left: 1px solid #ddd;
+}
+
+/* Pagination styles */
+.pagination {
+  margin-top: 20px;
+}
+
+.page-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-links a {
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.page-links a:hover {
+  background-color: #0056b3;
+}
+
+.page-current {
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+/* Form styles */
+form#logout-form {
+  display: inline;
+}
+
+form#logout-form button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+form#logout-form button:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}

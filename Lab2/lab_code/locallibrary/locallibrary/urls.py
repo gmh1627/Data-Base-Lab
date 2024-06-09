@@ -48,3 +48,11 @@ from django.urls import include
 urlpatterns += [
     path('accounts/', include('django.contrib.auth.urls')),
 ]
+
+from django.urls import path
+from catalog import views
+
+urlpatterns += [
+    # ... other url patterns ...
+    path('register/', views.register, name='register'),
+]
