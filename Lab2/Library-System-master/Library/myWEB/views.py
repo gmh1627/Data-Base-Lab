@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password, check_password  # 用户密码管理
 from django.utils import timezone  # django带时区管理的时间类
 from .models import dzTable, tsglyTable, smTable, tsTable, jsTable # 引入数据库、
-
+from django.core.paginator import Paginator
 
 def home(request):
     return render(request, 'home.html')
@@ -24,7 +24,7 @@ def login_view(request):  # 读者、管理员用户登录
             result = tsglyTable.objects.filter(xm=username)
             if result.exists() and check_password(password, result[0].psw):  # 管理员登录成功
                 request.session['login_type'] = 'gly'
-                request.session['id'] = result[0].gh
+                request.session['id'] = result[0].glyid
                 request.session['xm'] = result[0].xm
                 return redirect('/gly_index/')
             else:
@@ -64,7 +64,7 @@ def register(request):  # 新用户注册账户
             return render(request, 'register.html', context=context)
         if user_type == 'admin':
             table = tsglyTable
-            id_field = 'gh'
+            id_field = 'glyid'
         else:
             table = dzTable
             id_field = 'dzid'
@@ -72,16 +72,15 @@ def register(request):  # 新用户注册账户
             context["msg"] = "用户名已被使用，请选择其他用户名"
             return render(request, 'register.html', context=context)
         if table.objects.exists():
-            id_value = str(int(getattr(table.objects.latest(id_field), id_field)) + 1).zfill(5)
+            id_value = int(getattr(table.objects.latest(id_field), id_field)) + 1  # 修改这里，使 id_value 直接是数字
         else:
-            id_value = '00001'
+            id_value = 1
         item = table(xm=xm, **{id_field: id_value, 'psw': make_password(mm)})
         item.save()
-        context["msg"] = "注册成功，ID为：" + id_value
         return redirect('login_view')
     else:
         return render(request, 'register.html', context=context)
-    
+        
 def logout_view(request):  # 读者、管理员退出登录
     if request.session.get('login_type', None):
         request.session.flush()
@@ -96,14 +95,29 @@ request.session['xm']: 读者姓名 管理员姓名
 
 # =====================读者======================
 
-
 def dz_index(request):  # 读者首页
     if request.session.get('login_type', None) != 'dz':
         return HttpResponseRedirect("/")
     context = dict()
-    context['xm'] = request.session.get('xm')
+    context['xm'] = request.session.get('xm', None)
+    context['id'] = request.session.get('id', None)
+    result = jsTable.objects.filter(dzid_id=request.session.get('id'))
+    grzt = []
+    for elem in result:
+        grzt.append(
+            {
+                'tsid': elem.tsid.tsid,
+                'sm': elem.tsid.isbn.sm,
+                'jysj': elem.jysj,
+                'yhsj': elem.yhsj,
+                'ghsj': elem.ghsj
+            }
+        )
+    paginator = Paginator(grzt, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['page_obj'] = page_obj
     return render(request, 'dz_index.html', context=context)
-
 
 def dz_smztcx(request):  # 读者书目状态查询
     if request.session.get('login_type', None) != 'dz':
@@ -237,48 +251,22 @@ def dz_hs(request):  # 读者还书
         result.save()
         return render(request, 'dz_hs.html', context=context)
 
-def dz_grztcx(request):  # 读者个人(借书)状态查询
-    if request.session.get('login_type', None) != 'dz':
-        return HttpResponseRedirect("/")
-    context = dict()
-    context['xm'] = request.session.get('xm', None)
-    result = jsTable.objects.filter(dzid_id=request.session.get('id'))
-    grzt = []
-    for elem in result:
-        grzt.append(
-            {
-                'tsid': elem.tsid.tsid,
-                'sm': elem.tsid.isbn.sm,
-                'jysj': elem.jysj,
-                'yhsj': elem.yhsj,
-                'ghsj': elem.ghsj
-            }
-        )
-    context['grzt'] = grzt
-    return render(request, 'dz_grztcx.html', context=context)
-
-
 # =====================管理员======================
-
 
 def gly_index(request):  # 管理员首页
     if request.session.get('login_type', None) != 'gly':
         return HttpResponseRedirect("/")
     context = dict()
     context['xm'] = request.session.get('xm')
-    if request.method == 'GET':
-        return render(request, 'gly_index.html', context=context)
-    else:
-        result = jsTable.objects.filter(ghsj=None).extra(where=["""datediff(curdate(), yhsj) = 0"""])
-        context['msg'] = "提示" + str(len(result)) + "份逾期归还信息。"
-        return render(request, 'gly_index.html', context=context)
-
+    context['glyid'] = request.session.get('id') 
+    return render(request, 'gly_index.html', context=context) 
 
 def gly_smztcx(request):  # 管理员书目状态查询
     if request.session.get('login_type', None) != 'gly':
         return HttpResponseRedirect("/")
     context = dict()
     context['xm'] = request.session.get('xm', None)
+    context['glyid'] = request.session.get('id') 
     if request.method == 'GET':
         return render(request, 'gly_smztcx.html', context=context)
     else:
@@ -315,11 +303,38 @@ def gly_smztcx(request):  # 管理员书目状态查询
         context['smzt'] = smzt
         return render(request, 'gly_smztcx.html', context=context)
 
+def smzt_all(request):  # 所有书目状态查询
+    context = dict()
+    context['glyid'] = request.session.get('id') 
+    result = smTable.objects.all()
+    smzt = []
+    for elem in result:
+        smzt.append(
+            {
+                'ISBN': elem.isbn,
+                'sm': elem.sm,
+                'zz': elem.zz,
+                'cbs': elem.cbs,
+                'cbny': elem.cbny,
+                'kccs': len(tsTable.objects.filter(isbn=elem.isbn)),
+                'bwjcs': len(tsTable.objects.filter(isbn=elem.isbn, zt='不外借')),
+                'wjccs': len(tsTable.objects.filter(isbn=elem.isbn, zt='未借出')),
+                'yjccs': len(tsTable.objects.filter(isbn=elem.isbn, zt='已借出')),
+            }
+        )
+    paginator = Paginator(smzt, 10)  # 每页显示10个书目
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['page_obj'] = page_obj
+    context['all_books'] = smzt
+    return render(request, 'smzt_all.html', context=context)
+
 def gly_rk(request):  # 管理员入库
     if request.session.get('login_type', None) != 'gly':
         return HttpResponseRedirect("/")
     context = dict()
-    context['xm'] = request.session.get('xm')
+    context['xm'] = request.session.get('xm', None)
+    context['glyid'] = request.session.get('id') 
     if request.method == 'GET':
         return render(request, 'gly_rk.html', context=context)
     else:
@@ -363,21 +378,24 @@ def gly_rk(request):  # 管理员入库
                 for _ in range(int(rksl)):
                     item = tsTable(
                         isbn_id=isbn,
-                        cfwz='图书流通室',
+                        cfwz='流通室',
                         zt='未借出',
-                        jbr_id=request.session.get('id')
+                        jbr_id=request.session.get('id'),
                     )
                     item.save()
             else:  # 阅览室不外借
                 for _ in range(int(rksl)):
                     item = tsTable(
                         isbn_id=result[0].isbn,
-                        cfwz='图书阅览室',
+                        cfwz='阅览室',
                         zt='不外借',
-                        jbr_id=request.session.get('id')
+                        jbr_id=request.session.get('id'),
                     )
                     item.save()
             context['msg'] = "旧书入库成功！"
+            book = smTable.objects.get(isbn=isbn)
+            book.count = tsTable.objects.filter(isbn=book).count()
+            book.save()
         else:   # 新书录入
             if not (sm and zz and cbs and cbny):
                 context['msg'] = "检测到新书录入，请完整填写信息"
@@ -395,28 +413,32 @@ def gly_rk(request):  # 管理员入库
                 for _ in range(int(rksl)):
                     item = tsTable(
                         isbn_id=isbn,
-                        cfwz='图书流通室',
+                        cfwz='流通室',
                         zt='未借出',
-                        jbr_id=request.session.get('id')
+                        jbr_id=request.session.get('id'),
                     )
                     item.save()
             else:  # 阅览室不外借
                 for _ in range(int(rksl)):
                     item = tsTable(
                         isbn_id=isbn,
-                        cfwz='图书阅览室',
+                        cfwz='阅览室',
                         zt='不外借',
-                        jbr_id=request.session.get('id')
+                        jbr_id=request.session.get('id'),
                     )
                     item.save()
             context['msg'] = "新书入库成功！"
+            book = smTable.objects.get(isbn=isbn)
+            book.count = tsTable.objects.filter(isbn=book).count()
+            book.save()
         return render(request, 'gly_rk.html', context=context)
 
 def gly_ck(request):  # 管理员出库
     if request.session.get('login_type', None) != 'gly':
         return HttpResponseRedirect("/")
     context = dict()
-    context['xm'] = request.session.get('xm')
+    context['xm'] = request.session.get('xm', None)
+    context['glyid'] = request.session.get('id') 
     if request.method == 'GET':
         return render(request, 'gly_ck.html', context=context)
     else:
@@ -484,4 +506,11 @@ def gly_ck(request):  # 管理员出库
                 elem.delete()
             context['msg'] = "出库成功！"
             context['tsid'] = tsid
+        
+        sm = smTable.objects.get(isbn=isbn)
+        sm.kccs = tsTable.objects.filter(isbn=elem.isbn).count()
+        sm.bwjcs = tsTable.objects.filter(isbn=elem.isbn, zt='不外借').count()
+        sm.wjccs = tsTable.objects.filter(isbn=elem.isbn, zt='未借出').count()
+        sm.yjccs = tsTable.objects.filter(isbn=elem.isbn, zt='已借出').count()
+        sm.save()
         return render(request, 'gly_ck.html', context=context)

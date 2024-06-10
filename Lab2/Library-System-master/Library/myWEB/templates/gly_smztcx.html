@@ -16,16 +16,16 @@
     <title> 管理员书目状态查询 </title>
 </head>
 <body>
-<!--顶部栏-->
-<nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
-    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/gly_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
-    <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }}</span>
-    <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-            <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
-        </li>
-    </ul>
-</nav>
+
+    <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/gly_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
+        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ glyid }})</span> 
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
+            </li>
+        </ul>
+    </nav>
 
 <div class="container-fluid">
     <div class="row">
@@ -42,6 +42,12 @@
                         <a class="nav-link active" href="/gly_smztcx/">
                             <i class="zi zi_search"></i>
                             <span>书目状态查询</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/smzt_all/">
+                            <i class="zi zi_search"></i>
+                            <span>所有书目状态</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -109,7 +115,6 @@
                     <th scope="col" nowrap="true"> 不外借册数</th>
                     <th scope="col" nowrap="true"> 未借出册数</th>
                     <th scope="col" nowrap="true"> 已借出册数</th>
-                    <th scope="col" nowrap="true"> 已预约册数</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -124,7 +129,6 @@
                     <td align='center' style="font-weight: bold"> {{ elem.bwjcs }}</td>
                     <td align='center' style="font-weight: bold"> {{ elem.wjccs }}</td>
                     <td align='center' style="font-weight: bold"> {{ elem.yjccs }}</td>
-                    <td align='center' style="font-weight: bold"> {{ elem.yyycs }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>

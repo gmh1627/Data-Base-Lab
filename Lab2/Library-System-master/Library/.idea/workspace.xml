@@ -107,10 +107,9 @@
       <find>.get</find>
       <find>objects.get</find>
       <find>where</find>
-      <find>mail(</find>
       <find>print(</find>
       <find>grz</find>
-      <find>gly_js</find>
+      <find>dz_js</find>
       <find>hs</find>
       <find>slee</find>
       <find>cs</find>
@@ -119,7 +118,7 @@
       <find>print</find>
       <find>hr</find>
       <find>gly_sm</find>
-      <find>gly_hs</find>
+      <find>dz_hs</find>
       <find>.is</find>
       <find>id</find>
       <find>isdecimal</find>
@@ -148,8 +147,8 @@
         <option value="$PROJECT_DIR$/myWEB/templates/gly_index.html" />
         <option value="$PROJECT_DIR$/Library/urls.py" />
         <option value="$PROJECT_DIR$/myWEB/templates/dz_index.html" />
-        <option value="$PROJECT_DIR$/myWEB/templates/gly_js.html" />
-        <option value="$PROJECT_DIR$/myWEB/templates/gly_hs.html" />
+        <option value="$PROJECT_DIR$/myWEB/templates/dz_js.html" />
+        <option value="$PROJECT_DIR$/myWEB/templates/dz_hs.html" />
         <option value="$PROJECT_DIR$/myWEB/templates/dz_grztcx.html" />
         <option value="$PROJECT_DIR$/myWEB/templates/gly_smztcx.html" />
         <option value="$PROJECT_DIR$/myWEB/templates/gly_rk.html" />
@@ -391,7 +390,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/myWEB/templates/gly_js.html">
+    <entry file="file://$PROJECT_DIR$/myWEB/templates/dz_js.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
           <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
@@ -412,7 +411,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/myWEB/templates/gly_hs.html">
+    <entry file="file://$PROJECT_DIR$/myWEB/templates/dz_hs.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="418">
           <caret line="18" column="49" lean-forward="true" selection-start-line="18" selection-start-column="49" selection-end-line="18" selection-end-column="49" />

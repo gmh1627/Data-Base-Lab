@@ -23,7 +23,7 @@ class smTable(models.Model):  # Bibliographic information
     cbs = models.CharField(max_length=50)  # Publisher
     cbny = models.DateTimeField()  # Publication year and month
     jbr = models.ForeignKey(tsglyTable, on_delete=models.CASCADE)  # Handler
-
+    count = models.IntegerField(default=0)  # Count of books
 
 class tsTable(models.Model):  # Book information
     tsid = models.AutoField(primary_key=True)  # Book id
@@ -33,12 +33,12 @@ class tsTable(models.Model):  # Book information
     jbr = models.ForeignKey(tsglyTable, on_delete=models.CASCADE)  # Handler
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        assert self.cfwz in ('Circulation room', 'Reading room'), 'The storage location must be the circulation room or the reading room'
-        assert self.zt in ('Not borrowed', 'Borrowed', 'Not for loan', 'Reserved'), 'The book status must be Not borrowed, Borrowed, Not for loan, Reserved'
+        assert self.cfwz in ('流通室', '阅览室'), 'The storage location must be the circulation room or the reading room'
+        assert self.zt in ('未借出', '已借出', '不外借'), 'The book status must be Not borrowed, Borrowed, Not for loan, Reserved'
         super(tsTable, self).save(force_insert, force_update, using, update_fields)
 
     def delete(self, using=None, keep_parents=False):  # Outbound trigger
-        assert self.zt != 'Borrowed', 'Borrowed books are not allowed to be out of the library'
+        assert self.zt != '已借出', 'Borrowed books are not allowed to be out of the library'
         super(tsTable, self).delete(using, keep_parents)
 
 

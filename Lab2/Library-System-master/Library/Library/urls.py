@@ -21,19 +21,20 @@ urlpatterns = [
     path('', views.home),
     path('admin/', admin.site.urls),
 
-    path('login_view/', views.login_view),  # 登录
+    path('login_view/', views.login_view, name='login_view'),  # 登录
     path('register/', views.register),  # 注册
     path('logout_view/', views.logout_view),  # 退出登录
 
     path('dz_index/', views.dz_index),  # 读者首页
     path('dz_smztcx/', views.dz_smztcx),  # 读者书目状态查询
     #path('dz_yydj/', views.dz_yydj),  # 读者预约登记
-    path('dz_grztcx/', views.dz_grztcx),  # 读者个人状态查询
+    #path('dz_grztcx/', views.dz_grztcx),  # 读者个人状态查询
     path('dz_js/', views.dz_js),  # 读者借书
     path('dz_hs/', views.dz_hs),  # 读者还书
 
     path('gly_index/', views.gly_index),  # 管理员首页
     path('gly_smztcx/', views.gly_smztcx),  # 读者书目状态查询
+    path('smzt_all/', views.smzt_all),  # 所有书目状态
     path('gly_rk/', views.gly_rk),  # 管理员入库
     path('gly_ck/', views.gly_ck),  # 管理员出库
 

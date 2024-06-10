@@ -10,7 +10,7 @@
 <body>
 <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
     <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
-    <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }}</span>
+    <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ id }})</span>
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
             <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
@@ -36,33 +36,72 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/gly_js/">
+                        <a class="nav-link" href="/dz_js/">
                             <i class="zi zi_squareDown"></i>
                             <span>借书</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/gly_hs/">
+                        <a class="nav-link" href="/dz_hs/">
                             <i class="zi zi_squareUp"></i>
                             <span>还书</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dz_grztcx/">
-                            <i class="zi zi_squareUp"></i>
-                            <span>个人状态查询</span>
                         </a>
                     </li>
                 </ul>
             </div>
         </nav>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h2">读者首页</h1>
-            </div>
-        </main>
+       
     </div>
 </div>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">读者首页</h1>
+    </div>
+    {% if page_obj is not None %}
+    <table class="table container-fluid">
+        <thead class="thead-light">
+        <tr>
+            <th> 图书id</th>
+            <th> 书名</th>
+            <th> 借阅时间</th>
+            <th> 应还时间</th>
+            <th> 归还时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for elem in page_obj %}
+            <tr>
+                <td> {{ elem.tsid }} </td>
+                <td> {{ elem.sm }} </td>
+                <td> {{ elem.jysj }} </td>
+                <td> {{ elem.yhsj }} </td>
+                <td>
+                    {% if elem.ghsj is not None %}
+                        {{ elem.ghsj }}
+                    {% else %}
+                        尚未归还
+                    {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
+{% else %}
+    读者尚未进行过借阅！
+{% endif %}
+</main>
 </body>
 </html>
 <style>
