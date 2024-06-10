@@ -18,7 +18,7 @@
 <body>
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
         <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
-        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ id }})</span>
+        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ dzid }})</span>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
                 <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
@@ -66,10 +66,6 @@
             <form role="form" action="/dz_hs/" method="post">
                 {% csrf_token %}
                 <div class="form-group row">
-                    <label for="dzid" class="col-md-1 col-form-label">读者ID</label>
-                    <div class="col-sm-3">
-                        <input name="dzid" type="text" class="form-control" id="dzid" placeholder="" value="{{ dzid }}" readonly>
-                    </div>
                     <label for="tsid" class="col-md-1 col-form-label"> 图书ID </label>
                     <div class="col-sm-3">
                         <input name="tsid" type="text" class="form-control" id="tsid" placeholder="" value="{{ tsid }}">

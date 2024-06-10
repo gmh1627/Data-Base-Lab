@@ -9,7 +9,7 @@ class dzTable(models.Model):  # Reader information
         super(dzTable, self).save(force_insert, force_update, using, update_fields)
         
 class tsglyTable(models.Model):  # Library administrator information
-    gh = models.CharField(max_length=10, primary_key=True)  # Work number
+    glyid = models.CharField(max_length=10, primary_key=True)  # Work number
     psw = models.CharField(max_length=256)  # Administrator password
     xm = models.CharField(max_length=10)  # Name
 

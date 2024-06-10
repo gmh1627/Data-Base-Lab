@@ -124,6 +124,7 @@ def dz_smztcx(request):  # 读者书目状态查询
         return HttpResponseRedirect("/")
     context = dict()
     context['xm'] = request.session.get('xm', None)
+    context['id'] = request.session.get('id', None)
     if request.method == 'GET':
         return render(request, 'dz_smztcx.html', context=context)
     else:  # POST
@@ -169,21 +170,15 @@ def dz_js(request):  # 读者借书
         return HttpResponseRedirect("/")
     context = dict()
     context['xm'] = request.session.get('xm')
-    context['dzid'] = dzid = request.session.get('dzid')  # Get reader id from session
+    context['dzid'] = str(request.session.get('id', None))  # 将 id 转换为字符串类型
     if request.method == 'GET':
         return render(request, 'dz_js.html', context=context)
     else:
         context['isbn'] = isbn = request.POST.get('isbn')
         context['msg'] = "未知错误，请重试"
-        if not dzid or not isbn:
-            context['msg'] = "请填写完整的读者id和ISBN号"
-            return render(request, 'dz_js.html', context=context)
-        if not dzid.isdecimal():
-            context['msg'] = "读者id不存在！"
-            return render(request, 'dz_js.html', context=context)
-        result = dzTable.objects.filter(dzid=dzid)
-        if not result.exists():
-            context['msg'] = "读者id不存在！"
+        dzid = context['dzid']  # 获取读者 id，直接从会话中获取
+        if not isbn:
+            context['msg'] = "请填写完整的ISBN号"
             return render(request, 'dz_js.html', context=context)
         result = smTable.objects.filter(isbn=isbn)
         if not result.exists():
@@ -215,21 +210,18 @@ def dz_hs(request):  # 读者还书
         return HttpResponseRedirect("/")
     context = dict()
     context['xm'] = request.session.get('xm')
+    context['dzid'] = request.session.get('id', None)
     if request.method == 'GET':
         return render(request, 'dz_hs.html', context=context)
     else:
-        context['dzid'] = dzid = request.POST.get('dzid')
+        dzid = context['dzid']  # 获取读者 id，直接从会话中获取
         context['tsid'] = tsid = request.POST.get('tsid')
         context['msg'] = "未知错误，请重试"
-        if not dzid or not tsid:
-            context['msg'] = "请填写完整的读者id和ISBN号"
+        if not tsid:
+            context['msg'] = "请填写完整的图书id"
             return render(request, 'dz_hs.html', context=context)
-        if not dzid.isdecimal() or not tsid.isdecimal():
-            context['msg'] = "读者id和图书id必须是数字！"
-            return render(request, 'dz_hs.html', context=context)
-        result = dzTable.objects.filter(dzid=dzid)
-        if not result.exists():
-            context['msg'] = "读者id不存在！"
+        if not tsid.isdecimal():
+            context['msg'] = "图书id必须是数字！"
             return render(request, 'dz_hs.html', context=context)
         result = tsTable.objects.filter(tsid=tsid)
         if not result.exists():
