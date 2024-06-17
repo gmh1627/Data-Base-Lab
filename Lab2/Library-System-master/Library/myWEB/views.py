@@ -321,6 +321,16 @@ def smzt_all(request):  # 所有书目状态查询
     context['all_books'] = smzt
     return render(request, 'smzt_all.html', context=context)
 
+def borrowed_books(request):# 所有借阅信息
+    if request.session.get('login_type', None) != 'gly':
+        return HttpResponseRedirect("/")
+    context = dict()
+    context['xm'] = request.session.get('xm', None)
+    context['glyid'] = request.session.get('id') 
+    borrowed_books = jsTable.objects.select_related('dzid', 'tsid').filter(ghsj__isnull=True).order_by('dzid')
+    context['borrowed_books'] = borrowed_books
+    return render(request, 'borrowed_books.html', context=context)
+
 def gly_rk(request):  # 管理员入库
     if request.session.get('login_type', None) != 'gly':
         return HttpResponseRedirect("/")
@@ -476,6 +486,7 @@ def gly_ck(request):  # 管理员出库
                 else:
                     break
             for elem in ck:
+                jsTable.objects.filter(tsid=elem).update(is_valid=False)
                 elem.delete()
             context['msg'] = "出库成功！"
             context['tsid'] = tsid
@@ -495,14 +506,31 @@ def gly_ck(request):  # 管理员出库
                 else:
                     break
             for elem in ck:
+                jsTable.objects.filter(tsid=elem).update(is_valid=False)
                 elem.delete()
             context['msg'] = "出库成功！"
             context['tsid'] = tsid
         
         sm = smTable.objects.get(isbn=isbn)
-        sm.kccs = tsTable.objects.filter(isbn=elem.isbn).count()
-        sm.bwjcs = tsTable.objects.filter(isbn=elem.isbn, zt='不外借').count()
-        sm.wjccs = tsTable.objects.filter(isbn=elem.isbn, zt='未借出').count()
-        sm.yjccs = tsTable.objects.filter(isbn=elem.isbn, zt='已借出').count()
-        sm.save()
+        remaining_books = tsTable.objects.filter(isbn=elem.isbn).count()
+        if remaining_books == 0:
+        # 如果没有剩余的书，从smTable和tsTable中删除
+            sm.delete()
+        else:
+        # 更新smTable中的数量    
+            sm.kccs = tsTable.objects.filter(isbn=elem.isbn).count()
+            sm.bwjcs = tsTable.objects.filter(isbn=elem.isbn, zt='不外借').count()
+            sm.wjccs = tsTable.objects.filter(isbn=elem.isbn, zt='未借出').count()
+            sm.yjccs = tsTable.objects.filter(isbn=elem.isbn, zt='已借出').count()
+            sm.save()
         return render(request, 'gly_ck.html', context=context)
+    
+from django.db.models import Count
+
+def book_count_view(request):
+    book_counts = jsTable.objects.values('tsid__isbn__isbn', 'tsid__isbn__sm').annotate(total=Count('tsid')).order_by('-total')
+    return render(request, 'book_count.html', {'book_counts': book_counts})
+
+def reader_count_view(request):
+    reader_counts = jsTable.objects.values('dzid__dzid', 'dzid__xm').annotate(total=Count('dzid')).order_by('-total')
+    return render(request, 'reader_count.html', {'reader_counts': reader_counts})

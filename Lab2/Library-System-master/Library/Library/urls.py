@@ -35,7 +35,9 @@ urlpatterns = [
     path('gly_index/', views.gly_index),  # 管理员首页
     path('gly_smztcx/', views.gly_smztcx),  # 读者书目状态查询
     path('smzt_all/', views.smzt_all),  # 所有书目状态
+    path('borrowed_books/', views.borrowed_books),  # 所有书目状态
     path('gly_rk/', views.gly_rk),  # 管理员入库
     path('gly_ck/', views.gly_ck),  # 管理员出库
-
+    path('book_count/', views.book_count_view, name='book_count'),#书籍被借次数统计
+    path('reader_count/', views.reader_count_view, name='reader_count'),#读者借书数量统计
 ]

@@ -48,6 +48,7 @@ class jsTable(models.Model):  # Borrowing information
     jysj = models.DateTimeField()  # Borrowing time
     yhsj = models.DateTimeField()  # Due time
     ghsj = models.DateTimeField(blank=True, null=True)  # Return time
+    is_valid = models.BooleanField(default=True)  # Validity of the record
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         assert self.jysj < self.yhsj, 'The return time should be after the borrowing time'
@@ -55,6 +56,7 @@ class jsTable(models.Model):  # Borrowing information
 
     class Meta:
         unique_together = ("dzid", "tsid", "jysj")
+        
 '''
 class yyTable(models.Model):  # 预约信息
     dzid = models.ForeignKey(dzTable, on_delete=models.CASCADE)  # 读者ID
