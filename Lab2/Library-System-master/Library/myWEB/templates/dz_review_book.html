@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="../../static/css/dashboard.css" rel="stylesheet">
+    <title> 读者评书 </title>
+    <script src="../../static/zico/JS/zico.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
+    <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ dzid }})</span>
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dz_index/">
+                            <i class="zi zi_service"></i>
+                            <span>读者首页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/current_borrows/">
+                            <i class="zi zi_list"></i>
+                            <span>当前借阅书籍</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dz_smztcx/">
+                            <i class="zi zi_search"></i>
+                            <span>书目状态查询</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dz_js/">
+                            <i class="zi zi_book"></i>
+                            <span>借书</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dz_hs/">
+                            <i class="zi zi_book"></i>
+                            <span>还书</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dz_review_book/">
+                            <i class="zi zi_comment"></i>
+                            <span>评书</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_reviews/">
+                            <i class="zi zi_commentalt"></i>
+                            <span>评书记录</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+       
+    </div>
+</div>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
+        <h1 class="h2">评书</h1>
+    </div>
+    <!-- Display message if it exists -->
+    {% if msg %}
+        <div class="alert alert-success" role="alert">
+            {{ msg }}
+        </div>
+    {% endif %}
+    <!-- Search form -->
+    <form method="GET" action="">
+        <div class="form-group">
+            <label for="book_name">书名:</label>
+            <input type="text" class="form-control" id="book_name" name="book_name" placeholder="请输入书名">
+        </div>
+        <button type="submit" class="btn btn-primary">搜索</button>
+    </form>
+    <!-- Display search results -->
+    {% if books %}
+        <h2>搜索结果</h2>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="book_id">选择书籍:</label>
+                <select class="form-control" id="book_id" name="book_id">
+                    {% for book in books %}
+                        <option value="{{ book.id }}">{{ book.book_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="score">评分 (1-10):</label>
+                <input type="number" class="form-control" id="score" name="score" min="1" max="10" required placeholder="评分范围: 1-10">
+                <small class="form-text text-muted">请为书籍打分，评分范围为 1 到 10。</small>
+            </div>
+            <div class="form-group">
+                <label for="comment">评论 (最多 300 字):</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3" maxlength="300" placeholder="您的评论可以帮助其他读者了解这本书。"></textarea>
+                <small class="form-text text-muted">您的评论可以帮助其他读者了解这本书。评论字数限制为 300 字。</small>
+            </div>
+            <button type="submit" class="btn btn-success">提交评价</button>
+        </form>
+    {% endif %}
+</main>
+</body>
+</html>
+<style>
+    body{
+        background-image:url("../../static/img/background-o.jpg");
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-repeat: no-repeat;
+        background-attachment:fixed;
+    }
+</style>

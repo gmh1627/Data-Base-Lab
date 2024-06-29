@@ -26,16 +26,19 @@ urlpatterns = [
     path('logout_view/', views.logout_view),  # 退出登录
 
     path('dz_index/', views.dz_index),  # 读者首页
+    path('current_borrows/', views.current_borrows_view, name='current_borrows'), #当前借阅
     path('dz_smztcx/', views.dz_smztcx),  # 读者书目状态查询
-    #path('dz_yydj/', views.dz_yydj),  # 读者预约登记
-    #path('dz_grztcx/', views.dz_grztcx),  # 读者个人状态查询
+    path('submit_review/', views.submit_review, name='submit_review'), # 提交评论
     path('dz_js/', views.dz_js),  # 读者借书
     path('dz_hs/', views.dz_hs),  # 读者还书
+    path('dz_review_book/', views.dz_review_book, name='dz_review_book'),  # 读者评书
+    path('my_reviews/', views.my_reviews, name='my_reviews'),  # 所有评论
+    path('revoke_review/', views.revoke_review, name='revoke_review'), # 撤销评论
 
     path('gly_index/', views.gly_index),  # 管理员首页
-    path('gly_smztcx/', views.gly_smztcx),  # 读者书目状态查询
+    path('gly_smztcx/', views.gly_smztcx),  # 管理员书目状态查询
     path('smzt_all/', views.smzt_all),  # 所有书目状态
-    path('borrowed_books/', views.borrowed_books),  # 所有书目状态
+    path('borrowed_books/', views.borrowed_books),  # 所有已借出书目状态
     path('gly_rk/', views.gly_rk),  # 管理员入库
     path('gly_ck/', views.gly_ck),  # 管理员出库
     path('book_count/', views.book_count_view, name='book_count'),#书籍被借次数统计

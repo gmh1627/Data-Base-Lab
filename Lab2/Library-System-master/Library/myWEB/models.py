@@ -7,14 +7,17 @@ class dzTable(models.Model):  # Reader information
     
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super(dzTable, self).save(force_insert, force_update, using, update_fields)
-        
-class tsglyTable(models.Model):  # Library administrator information
+     
+from django.contrib.auth.hashers import make_password
+
+class tsglyTable(models.Model):
     glyid = models.CharField(max_length=10, primary_key=True)  # Work number
     psw = models.CharField(max_length=256)  # Administrator password
     xm = models.CharField(max_length=10)  # Name
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        super(tsglyTable, self).save(force_insert, force_update, using, update_fields)
+    def save(self, *args, **kwargs):
+        self.psw = make_password(self.psw)  # Encrypt the password before saving
+        super(tsglyTable, self).save(*args, **kwargs)
 
 class smTable(models.Model):  # Bibliographic information
     isbn = models.CharField(max_length=50, primary_key=True)  # ISBN number
@@ -22,7 +25,6 @@ class smTable(models.Model):  # Bibliographic information
     zz = models.CharField(max_length=50)  # Author
     cbs = models.CharField(max_length=50)  # Publisher
     cbny = models.DateTimeField()  # Publication year and month
-    jbr = models.ForeignKey(tsglyTable, on_delete=models.CASCADE)  # Handler
     count = models.IntegerField(default=0)  # Count of books
 
 class tsTable(models.Model):  # Book information
@@ -41,10 +43,21 @@ class tsTable(models.Model):  # Book information
         assert self.zt != '已借出', 'Borrowed books are not allowed to be out of the library'
         super(tsTable, self).delete(using, keep_parents)
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 
+class BookReview(models.Model):  # Book review
+    dzid = models.ForeignKey(dzTable, on_delete=models.CASCADE)
+    isbn = models.ForeignKey(smTable, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(10)])
+    comment = models.TextField(blank=True, null=True, max_length=300)
+    comment_time = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("dzid", "isbn", "comment_time")
+        
 class jsTable(models.Model):  # Borrowing information
     dzid = models.ForeignKey(dzTable, on_delete=models.PROTECT)  # Reader ID
-    tsid = models.ForeignKey(tsTable, on_delete=models.PROTECT)  # Book ID
+    tsid = models.ForeignKey(tsTable, on_delete=models.SET_NULL, null=True)  # Book ID
     jysj = models.DateTimeField()  # Borrowing time
     yhsj = models.DateTimeField()  # Due time
     ghsj = models.DateTimeField(blank=True, null=True)  # Return time
@@ -56,30 +69,3 @@ class jsTable(models.Model):  # Borrowing information
 
     class Meta:
         unique_together = ("dzid", "tsid", "jysj")
-        
-'''
-class yyTable(models.Model):  # 预约信息
-    dzid = models.ForeignKey(dzTable, on_delete=models.CASCADE)  # 读者ID
-    isbn = models.ForeignKey(smTable, on_delete=models.CASCADE)  # ISBN号
-    tsid = models.ForeignKey(tsTable, blank=True, null=True, on_delete=models.CASCADE)  # 图书ID
-    yysj = models.DateTimeField()
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):  # 创建预约触发器
-        super(yyTable, self).save(force_insert, force_update, using, update_fields)
-        if not self.tsid:  # 新建预约没有图书id
-            mail(
-                "预约成功通知函",
-                "您已成功预约一本书, 书名为《" + str(self.isbn.sm) +
-                "》。预约时间：" + str(timezone.now()),
-                self.dzid.email
-            )
-        else:  # 预约更新添加图书id
-            mail(
-                "预约借书通知",
-                "您预约的图书《" + str(self.isbn.sm) + "》已经为您库存，请及时借阅！",
-                self.dzid.email
-            )
-
-    class Meta:
-        unique_together = ("dzid", "isbn", "yysj")
-'''

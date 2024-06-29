@@ -19,42 +19,60 @@
             </li>
         </ul>
     </nav>
-<div class="container-fluid">
-    <div class="row">
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-            <div class="sidebar-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/dz_index/">
-                            <i class="zi zi_service"></i>
-                            <span>读者首页</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dz_smztcx/">
-                            <i class="zi zi_search"></i>
-                            <span>书目状态查询</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dz_js/">
-                            <i class="zi zi_squareDown"></i>
-                            <span>借书</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dz_hs/">
-                            <i class="zi zi_squareUp"></i>
-                            <span>还书</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dz_index/">
+                                <i class="zi zi_service"></i>
+                                <span>读者首页</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/current_borrows/">
+                                <i class="zi zi_list"></i>
+                                <span>当前借阅书籍</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/dz_smztcx/">
+                                <i class="zi zi_search"></i>
+                                <span>书目状态查询</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dz_js/">
+                                <i class="zi zi_book"></i>
+                                <span>借书</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dz_hs/">
+                                <i class="zi zi_book"></i>
+                                <span>还书</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dz_review_book/">
+                                <i class="zi zi_comment"></i>
+                                <span>评书</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my_reviews/">
+                                <i class="zi zi_commentalt"></i>
+                                <span>评书记录</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
     </div>
-</div>
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
         <h1 class="h2">书目状态查询</h1>
     </div>
     <form role="form" action="/dz_smztcx/" method="post" class="container-fluid">
@@ -117,6 +135,7 @@
                     <th> 不外借册数</th>
                     <th> 未借出册数</th>
                     <th> 已借出册数</th>
+                    <th> 评书</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -131,10 +150,98 @@
                         <td> {{ elem.bwjcs }} </td>
                         <td> {{ elem.wjccs }} </td>
                         <td> {{ elem.yjccs }} </td>
+                        <td>
+                            <button type="button" class="btn btn-primary review-book-btn" data-toggle="modal" data-target="#reviewModal" data-isbn="{{ elem.ISBN }}">评书</button>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <form action="{% url 'dz_smztcx' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="reviewModalLabel">书籍评价</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <input type="hidden" name="isbn" id="reviewIsbn" value="">
+                        <div class="form-group">
+                          <label for="score">评分 (1-10)</label>
+                          <input type="number" class="form-control" id="score" name="score" min="1" max="10" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="comment">评语 (限100字)</label>
+                          <textarea class="form-control" id="comment" name="comment" rows="3" maxlength="100" required></textarea>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">提交评价</button>
+                      </div>
+                      <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                          var reviewButtons = document.querySelectorAll('.review-book-btn');
+                          reviewButtons.forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                              var isbn = this.getAttribute('data-isbn');
+                              document.getElementById('reviewIsbn').value = isbn;
+                            });
+                          });
+                        
+                          var form = document.querySelector('form');
+                          form.addEventListener('submit', function(e) {
+                            e.preventDefault(); // Prevent default form submission
+                        
+                            var formData = new FormData(form);
+                        
+                            fetch('{% url 'dz_smztcx' %}', {
+                              method: 'POST',
+                              body: formData,
+                              headers: {
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                              },
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                              if(data.success) {
+                                $('#reviewModal').modal('hide');
+                                
+                                // Create success message and return button
+                                var successDiv = document.createElement('div');
+                                successDiv.innerHTML = '<div class="alert alert-success" role="alert">提交成功!</div>';
+                                
+                                var returnButton = document.createElement('button');
+                                returnButton.className = 'btn btn-primary';
+                                returnButton.innerText = '返回';
+                                returnButton.onclick = function() {
+                                  window.location.reload(); // Reload the page or navigate as needed
+                                };
+                                
+                                successDiv.appendChild(returnButton);
+                                
+                                // Append the success message and button to the main container or a specific element
+                                document.querySelector('main').appendChild(successDiv);
+                              } else {
+                                alert('提交失败，请重试。');
+                              }
+                            })
+                            .catch(error => {
+                              console.error('Error:', error);
+                              alert('提交失败，请重试。');
+                            });
+                          });
+                        });
+                        </script>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              
         {% endif %}
     {% endif %}
 </main>

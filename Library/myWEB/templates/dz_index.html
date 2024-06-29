@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="../../static/css/dashboard.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-    <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
+    <title> 读者首页 </title>
     <script src="../../static/zico/JS/zico.min.js"></script>
-    <title> 个人状态查询 </title>
 </head>
 <body>
-    <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
-        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ id }})</span>
-        <ul class="navbar-nav px-3">
-            <li class="nav-item text-nowrap">
-                <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
-            </li>
-        </ul>
-    </nav>
+<nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
+    <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ id }})</span>
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
+        </li>
+    </ul>
+</nav>
+
 <div class="container-fluid">
     <div class="row">
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
@@ -28,6 +27,12 @@
                         <a class="nav-link active" href="/dz_index/">
                             <i class="zi zi_service"></i>
                             <span>读者首页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/current_borrows/">
+                            <i class="zi zi_service"></i>
+                            <span>当前借阅书籍</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -51,13 +56,16 @@
                 </ul>
             </div>
         </nav>
+       
     </div>
 </div>
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">个人状态查询</h1>
+        <h1 class="h2">读者首页</h1>
     </div>
-    {% if grzt is not None %}
+    <p>当前借阅数量：{{ current_borrow_count }}</p>
+    <p>总借阅数量：{{ historical_borrow_count }}</p>
+    {% if page_obj is not None %}
     <table class="table container-fluid">
         <thead class="thead-light">
         <tr>
@@ -69,7 +77,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for elem in grzt %}
+        {% for elem in page_obj %}
             <tr>
                 <td> {{ elem.tsid }} </td>
                 <td> {{ elem.sm }} </td>
@@ -85,11 +93,23 @@
         {% endfor %}
         </tbody>
     </table>
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
 {% else %}
     读者尚未进行过借阅！
 {% endif %}
 </main>
-
 </body>
 </html>
 <style>
