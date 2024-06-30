@@ -13,9 +13,10 @@
             $('#alert').alert()
         })
     </script>
-    <title> 管理员入库 </title>
+    <title> 管理员书目状态查询 </title>
 </head>
 <body>
+
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
         <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/gly_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
         <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ glyid }})</span> 
@@ -25,9 +26,10 @@
             </li>
         </ul>
     </nav>
+
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="sidebar-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -37,7 +39,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/gly_smztcx/">
+                            <a class="nav-link active" href="/gly_smztcx/">
                                 <i class="zi zi_search"></i>
                                 <span>书目状态查询</span>
                             </a>
@@ -68,13 +70,13 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/book_count/">
-                                <i class="zi zi_listalt"></i>
+                                <i class="zi zi_book"></i>
                                 <span>书籍被借阅次数统计</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/reader_count/">
-                                <i class="zi zi_listalt"></i>
+                            <a class="nav-link" href="/reader_count/">
+                                <i class="zi zi_book"></i>
                                 <span>读者借书数量统计</span>
                             </a>
                         </li>
@@ -85,63 +87,75 @@
     </div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
-                <h1 class="h2">图书入库</h1>
+                <h1 class="h2">书目状态查询</h1>
             </div>
-            <form role="form" action="/gly_rk/" method="post">
+            <form role="form" action="/gly_smztcx/" method="post">
                 {% csrf_token %}
-                <span class="badge badge-pill badge-primary">必填</span>
                 <div class="form-group row">
+                    <label for="sm" class="col-md-1 col-form-label">书名</label>
                     <div class="col-sm-3">
-                        <label for="isbn" class="col-form-label">ISBN号</label>
-                        <input name="isbn" type="text" class="form-control" id="isbn" placeholder="请输入ISBN号" value="{{ isbn }}" autofocus>
+                        <input name="sm" type="text" class="form-control" id="sm" placeholder="" value="{{ sm }}" autofocus name="sm">
                     </div>
+                    <label for="zz" class="col-md-1 col-form-label"> 作者 </label>
                     <div class="col-sm-3">
-                        <label for="rksl" class="col-form-label"> 入库数量 </label>
-                        <input name="rksl" type="number" min="1" class="form-control" id="rksl" placeholder="请输入入库数量" value="{{ rksl }}">
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="rkhzt" class="col-form-label">入库后状态</label>
-                        <select class="custom-select" name="rkhzt">
-                            <option selected>请选择流通室或阅览室...</option>
-                            <option name="rkhzt" id="rkhzt">流通室</option>
-                            <option name="rkhzt" id="rkhzt">阅览室</option>
-                        </select>
-                        <!--<input name="rkhzt" type="text" class="form-control" id="rkhzt" placeholder="入库后状态（流通室、阅览室）" value="{{ rkhzt }}" autofocus>-->
+                        <input name="zz" type="text" class="form-control" id="zz" placeholder="" value="{{ zz }}">
                     </div>
                 </div>
-                <hr style="border-top:1px solid #dee2e6;" width="100%" color="#dee2e6" size=1>
-                <span class="badge badge-pill badge-primary">新书录入时填写</span>
                 <div class="form-group row">
+                    <label for="isbn" class="col-md-1 col-form-label"> ISBN号 </label>
                     <div class="col-sm-3">
-                        <label for="sm" class="col-form-label"> 书名</label>
-                        <input name="sm" type="text" class="form-control" id="sm" placeholder="请输入书名" value="{{ sm }}">
+                        <input name="isbn" type="text" class="form-control" id="isbn" placeholder="" value="{{ isbn }}">
                     </div>
+                    <label for="cbs" class="col-md-1 col-form-label"> 出版社 </label>
                     <div class="col-sm-3">
-                        <label for="zz" class="col-form-label">作者</label>
-                        <input name="zz" type="text" class="form-control" id="zz" placeholder="请输入作者" value="{{ zz }}" autofocus>
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="cbs" class="col-form-label"> 出版社 </label>
-                        <input name="cbs" type="text" class="form-control" id="cbs" placeholder="请输入出版社" value="{{ cbs }}">
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="cbny" class="col-form-label">出版年月（yyyy-mm-dd）</label>
-                        <input name="cbny" type="text" class="form-control" id="cbny" placeholder="请输入出版年月yyyy-mm-dd" value="{{ cbny }}" autofocus>
+                        <input name="cbs" type="text" class="form-control" id="cbs" placeholder="" value="{{ cbs }}">
                     </div>
                 </div>
-                <button class="btn btn-primary mt-2">入库</button>
-                <br><br>
-                {%if msg%}
-                <div id="alert" class="alert alert-primary alert-dismissible fade show" role="alert" style="display: inline-flex">
-                    {{ msg }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                {% endif %}
+                <button class="btn btn-primary"> 查询</button>
             </form>
+            <br>
+            {% if request.method == 'POST' %}
+            {% if not smzt %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: inline-block">
+                未找到匹配信息！
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% else %}
+            <table class="table mt-3 table-hover" style="font-size: medium">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col"> ISBN号</th>
+                    <th scope="col"> 书名</th>
+                    <th scope="col"> 作者</th>
+                    <th scope="col"> 出版社</th>
+                    <th scope="col"> 出版年月</th>
+                    <th scope="col" nowrap="true"> 库藏册数</th>
+                    <th scope="col" nowrap="true"> 不外借册数</th>
+                    <th scope="col" nowrap="true"> 未借出册数</th>
+                    <th scope="col" nowrap="true"> 已借出册数</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for elem in smzt %}
+                <tr>
+                    <td nowrap="true"> {{ elem.ISBN }}</td>
+                    <td nowrap="true"> {{ elem.sm }}</td>
+                    <td nowrap="true"> {{ elem.zz }}</td>
+                    <td nowrap="true"> {{ elem.cbs }}</td>
+                    <td nowrap="true"> {{ elem.cbny }}</td>
+                    <td align='center' style="font-weight: bold"> {{ elem.kccs }}</td>
+                    <td align='center' style="font-weight: bold"> {{ elem.bwjcs }}</td>
+                    <td align='center' style="font-weight: bold"> {{ elem.wjccs }}</td>
+                    <td align='center' style="font-weight: bold"> {{ elem.yjccs }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            {% endif %}
         </main>
-
     </div>
 </div>
 </body>

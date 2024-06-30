@@ -30,37 +30,42 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/current_borrows/">
-                            <i class="zi zi_service"></i>
+                        <a class="nav-link" href="/current_borrows/">
+                            <i class="zi zi_list"></i>
                             <span>当前借阅书籍</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/dz_smztcx/">
                             <i class="zi zi_search"></i>
-                            <span>书目状态查询</span>
+                            <span>书目查询与评论</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/dz_js/">
-                            <i class="zi zi_squareDown"></i>
+                            <i class="zi zi_book"></i>
                             <span>借书</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/dz_hs/">
-                            <i class="zi zi_squareUp"></i>
+                            <i class="zi zi_book"></i>
                             <span>还书</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_reviews/">
+                            <i class="zi zi_commentalt"></i>
+                            <span>评书记录</span>
                         </a>
                     </li>
                 </ul>
             </div>
         </nav>
-       
     </div>
 </div>
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
         <h1 class="h2">读者首页</h1>
     </div>
     <p>当前借阅数量：{{ current_borrow_count }}</p>
@@ -89,10 +94,12 @@
                     {% else %}
                         尚未归还
                     {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    <p>注：此表格仅显示在库图书</p>
     <div class="pagination">
         {% if page_obj.has_previous %}
             <a href="?page=1">First</a>

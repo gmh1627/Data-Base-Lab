@@ -7,14 +7,17 @@ class dzTable(models.Model):  # Reader information
     
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super(dzTable, self).save(force_insert, force_update, using, update_fields)
-        
-class tsglyTable(models.Model):  # Library administrator information
+     
+from django.contrib.auth.hashers import make_password
+
+class tsglyTable(models.Model):
     glyid = models.CharField(max_length=10, primary_key=True)  # Work number
     psw = models.CharField(max_length=256)  # Administrator password
     xm = models.CharField(max_length=10)  # Name
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        super(tsglyTable, self).save(force_insert, force_update, using, update_fields)
+    def save(self, *args, **kwargs):
+        self.psw = make_password(self.psw)  # Encrypt the password before saving
+        super(tsglyTable, self).save(*args, **kwargs)
 
 class smTable(models.Model):  # Bibliographic information
     isbn = models.CharField(max_length=50, primary_key=True)  # ISBN number
@@ -40,9 +43,21 @@ class tsTable(models.Model):  # Book information
         assert self.zt != '已借出', 'Borrowed books are not allowed to be out of the library'
         super(tsTable, self).delete(using, keep_parents)
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+class BookReview(models.Model):  # Book review
+    dzid = models.ForeignKey(dzTable, on_delete=models.CASCADE)
+    isbn = models.ForeignKey(smTable, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(10)])
+    comment = models.TextField(blank=True, null=True, max_length=300)
+    comment_time = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("dzid", "isbn", "comment_time")
+        
 class jsTable(models.Model):  # Borrowing information
     dzid = models.ForeignKey(dzTable, on_delete=models.PROTECT)  # Reader ID
-    tsid = models.ForeignKey(tsTable, on_delete=models.PROTECT)  # Book ID
+    tsid = models.ForeignKey(tsTable, on_delete=models.SET_NULL, null=True)  # Book ID
     jysj = models.DateTimeField()  # Borrowing time
     yhsj = models.DateTimeField()  # Due time
     ghsj = models.DateTimeField(blank=True, null=True)  # Return time

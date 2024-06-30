@@ -4,20 +4,19 @@
     <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="../../static/css/home.css" rel="stylesheet" type="text/css">
     <meta charset="UTF-8">
-    <title>图书管理统一身份认证</title>
+    <title>图书管理系统身份认证</title>
 </head>
 <body class="text-center">
 <div class="background"></div>
-<!--<h1>图书管理统一身份认证</h1>-->
 
 <form class="login-box" role="form" action="/login_view/" method="post">
     {% csrf_token %}
-    <h3 class="login-title"> 图书管理统一身份认证 </h3>
-    <label for="zh" class="left pt-1"> 用户名 </label>
+    <h3 class="login-title" style="color: #42408fe6;"> 图书管理系统身份认证 </h3>
+    <label for="zh" class="left pt-1" style="color: #42408fe6;"> 用户名 </label>
     <input name="username" type="text" class="form-control" id="zh" placeholder="请输入用户名" value="{{ username }}" required autofocus>
-    <label for="mm" class="left pt-2"> 密码 </label>
+    <label for="mm" class="left pt-2" style="color: #42408fe6;"> 密码 </label>
     <input name="password" type="password" class="form-control" id="mm" placeholder="请输入密码" value="">
-    <label for="user_type" class="left pt-2"> 用户类型 </label>
+    <label for="user_type" class="left pt-2" style="color: #42408fe6;"> 用户类型 </label>
     <select name="user_type" id="user_type" class="form-control">
     <option value="admin">管理员</option>
     <option value="reader">读者</option>

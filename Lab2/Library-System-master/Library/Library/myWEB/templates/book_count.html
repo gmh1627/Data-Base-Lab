@@ -13,7 +13,7 @@
             $('#alert').alert()
         })
     </script>
-    <title>读者借书数量统计</title>
+    <title>书籍被借阅次数统计</title>
 </head>
 <body>
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
@@ -27,7 +27,7 @@
     </nav>
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="sidebar-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -67,14 +67,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/book_count/">
-                                <i class="zi zi_listalt"></i>
+                            <a class="nav-link active" href="/book_count/">
+                                <i class="zi zi_book"></i>
                                 <span>书籍被借阅次数统计</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/reader_count/">
-                                <i class="zi zi_listalt"></i>
+                            <a class="nav-link" href="/reader_count/">
+                                <i class="zi zi_book"></i>
                                 <span>读者借书数量统计</span>
                             </a>
                         </li>
@@ -85,22 +85,22 @@
     </div>
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
-            <h1 class="h2">读者借书数量统计</h1>
+            <h1 class="h2">书籍被借阅次数统计</h1>
         </div>
         <table class="table mt-3 table-hover" style="font-size: medium">
             <thead class="thead-light">
             <tr>
-                <th scope="col">读者ID</th>
-                <th scope="col">读者姓名</th>
-                <th scope="col">借书数量</th>
+                <th scope="col">ISBN号</th>
+                <th scope="col">书名</th>
+                <th scope="col">被借阅次数</th>
             </tr>
             </thead>
             <tbody>
-            {% for reader_count in reader_counts %}
+            {% for book_count in book_counts %}
             <tr>
-                <td nowrap="true"> {{ reader_count.dzid__dzid }}</td>
-                <td> {{ reader_count.dzid__xm }}</td>
-                <td align='left' style="font-weight: bold"> {{ reader_count.total }}</td>
+                <td nowrap="true"> {{ book_count.tsid__isbn__isbn }}</td>
+                <td> {{ book_count.tsid__isbn__sm }}</td>
+                <td align='left' style="font-weight: bold"> {{ book_count.total }}</td>
             </tr>
             {% endfor %}
             </tbody>

@@ -13,7 +13,7 @@
             $('#alert').alert()
         })
     </script>
-    <title> 读者借书 </title>
+    <title> 读者还书 </title>
 </head>
 <body>
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
@@ -28,7 +28,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="sidebar-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -50,13 +50,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/dz_js/">
+                            <a class="nav-link" href="/dz_js/">
                                 <i class="zi zi_book"></i>
                                 <span>借书</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/dz_hs/">
+                            <a class="nav-link active" href="/dz_hs/">
                                 <i class="zi zi_book"></i>
                                 <span>还书</span>
                             </a>
@@ -74,17 +74,17 @@
     </div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
-                <h1 class="h2">读者借书</h1>
+                <h1 class="h2">读者还书</h1>
             </div>
-            <form role="form" action="/dz_js/" method="post">
+            <form role="form" action="/dz_hs/" method="post">
                 {% csrf_token %}
                 <div class="form-group row">
-                    <label for="isbn" class="col-md-1 col-form-label"> ISBN号 </label>
+                    <label for="tsid" class="col-md-1 col-form-label"> 图书ID </label>
                     <div class="col-sm-3">
-                        <input name="isbn" type="text" class="form-control" id="isbn" placeholder="" value="{{ isbn }}">
+                        <input name="tsid" type="text" class="form-control" id="tsid" placeholder="" value="{{ tsid }}">
                     </div>
                 </div>
-                <button class="btn btn-primary">借书</button>
+                <button class="btn btn-primary">还书</button>
                 <br><br>
                 {%if msg%}
                 <div class="alert alert-primary alert-dismissible fade show" role="alert" style="display: inline-block">

@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,7 +74,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'library',                     
-        'USER': 'root',                      
+        'USER':'root',                 
         'PASSWORD': '1162713Gmh',              
         'HOST': '127.0.0.1',                
         'PORT': 3306,                           
