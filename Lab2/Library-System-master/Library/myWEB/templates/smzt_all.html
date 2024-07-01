@@ -107,7 +107,7 @@
             <tbody>
             {% for book in all_books %}
             <tr>
-                <td nowrap="true"> {{ book.ISBN }}</td>
+                <td nowrap="true"><a href="{% url 'book_details2' book.ISBN %}">{{ book.ISBN }}</a></td>
                 <td nowrap="true"> {{ book.sm }}</td>
                 <td nowrap="true"> {{ book.zz }}</td>
                 <td nowrap="true"> {{ book.cbs }}</td>

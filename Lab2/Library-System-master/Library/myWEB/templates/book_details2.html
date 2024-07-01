@@ -4,21 +4,15 @@
     <meta charset="UTF-8">
     <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="../../static/css/dashboard.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../static/zico/JS/zico.min.js"></script>
-    <script>
-        $(function () {
-            $('#alert').alert()
-        })
-    </script>
-    <title>书籍被借阅次数统计</title>
+    <title> 读者书目状态查询 </title>
 </head>
 <body>
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/gly_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
-        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ glyid }})</span> 
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
+        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ id }})</span>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
                 <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
@@ -37,7 +31,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/gly_smztcx/">
+                            <a class="nav-link active" href="/gly_smztcx/">
                                 <i class="zi zi_search"></i>
                                 <span>书目状态查询</span>
                             </a>
@@ -67,7 +61,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/book_count/">
+                            <a class="nav-link" href="/book_count/">
                                 <i class="zi zi_book"></i>
                                 <span>书籍被借阅次数统计</span>
                             </a>
@@ -83,39 +77,71 @@
             </nav>
         </div>
     </div>
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
-            <h1 class="h2">书籍被借阅次数统计</h1>
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
+            <h1 class="h2">书籍详细信息</h1>
         </div>
-        <table class="table mt-3 table-hover" style="font-size: medium">
+        <div>
+            <h4>书名: {{ books_info.first.isbn.sm }}</h4>
+            <h4>ISBN: {{ books_info.first.isbn.isbn }}</h4>
+            <p>作者: {{ books_info.first.isbn.zz }}</p>
+            <p>出版社: {{ books_info.first.isbn.cbs }}</p>
+            <p>出版时间: {{ books_info.first.isbn.cbny }}</p>
+            <p>库存数量: {{ books_info.first.isbn.count }}</p>
+        </div>
+        
+        <h4>评分: {{ average_score }}</h4>
+        <h4>馆藏信息</h4>
+        <table class="table container-fluid">
             <thead class="thead-light">
-            <tr>
-                <th scope="col">ISBN号</th>
-                <th scope="col">书名</th>
-                <th scope="col">被借阅次数</th>
-            </tr>
+                <tr class="table-primary">
+                    <th>图书id</th>
+                    <th>藏书位置</th>
+                    <th>状态</th>
+                </tr>
             </thead>
             <tbody>
-            {% for book_count in book_counts %}
-            <tr>
-                <td nowrap="true"> <a href="{% url 'book_details2' book_count.tsid__isbn__isbn %}">{{ book_count.tsid__isbn__isbn }}</a> </td>
-                <td> {{ book_count.tsid__isbn__sm }}</td>
-                <td align='left' style="font-weight: bold"> {{ book_count.total }}</td>
-            </tr>
-            {% endfor %}
+                {% for book in books_info %}
+                <tr>
+                    <td>{{ book.tsid }}</td>
+                    <td>{{ book.cfwz }}</td>
+                    <td>{{ book.zt }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h4>本书相关评论</h4>
+        <table class="table container-fluid">
+            <thead class="thead-light">
+                <tr class="table-primary">
+                    <th>评分</th>
+                    <th>评语</th>
+                    <th>评书时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review.score }}</td>
+                    <td>{{ review.comment }}</td>
+                    <td>{{ review.comment_time }}</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </main>
+    
+
 </body>
 </html>
 <style>
-    body{
-        background-image:url("../../static/img/background-o.jpg");
+    body {
+        background-image: url("../../static/img/background-o.jpg");
         background-size: cover;
         width: 100%;
         height: 100%;
         position: absolute;
         background-repeat: no-repeat;
-        background-attachment:fixed;
+        background-attachment: fixed;
     }
 </style>

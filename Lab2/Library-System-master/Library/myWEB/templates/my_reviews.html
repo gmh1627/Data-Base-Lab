@@ -59,6 +59,12 @@
                             <span>评书记录</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ranking/">
+                            <i class="zi zi_listSquare"></i>
+                            <span>排行榜</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -83,17 +89,19 @@
             </thead>
             <tbody>
                 {% for review in reviews %}
-                <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ review.isbn }}</td>
+                <tr id="review-{{ review.id }}">
+                    <th scope="row">{{ forloop.counter|add:offset }}</th>
+                    <td><a href="{% url 'book_details' review.isbn %}">{{ review.isbn }}</a></td>
                         <td>{{ review.sm }}</td>
                         <td>{{ review.score }}</td>
                         <td>{{ review.comment_time }}</td>
                         <td>{{ review.comment }}</td>
-                        <td><button class="btn btn-danger revoke-btn" data-review-id="{{ review.id }}">撤回评论</button></td>
+                        <td><button class="btn btn-danger btn-sm revoke-btn" data-review-id="{{ review.id }}">撤回评论</button></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
                 <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
@@ -112,74 +120,54 @@
     {% else %}
         <p>当前没有评书记录</p>
     {% endif %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.revoke-btn').forEach(button => {
-                button.onclick = function() {
-                    const reviewId = this.getAttribute('data-review-id');
-                    fetch('/revoke_review/', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken'),
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ reviewId: reviewId }),
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
+    
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.revoke-btn').forEach(button => {
+            button.onclick = () => { // Changed to an arrow function
+                const reviewId = button.getAttribute('data-review-id'); // Use button instead of this
+                fetch('/revoke_review/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({ reviewId: reviewId })
+                })
+                .then(response => {
+                    if (response.ok) {
                         return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            const reviewElement = document.getElementById(`review-${reviewId}`);
-                            reviewElement.remove(); // 移除评论元素
-                            if (confirm("Review revoked. Do you want to re-review?")) {
-                                addReviewForm(document.body); // 假设 addReviewForm 函数已定义
-                            } else {
-                                window.location.href = '/my_reviews/'; // 重定向到评论页面
-                            }
-                        }
-                    })
-                    .catch(error => console.error('There has been a problem with your fetch operation:', error));
-                };
-            });
-        });
-        
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
                     }
+                    throw new Error('Something went wrong');
+                })
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`review-${reviewId}`).remove();
+                    } else {
+                        alert('Failed to revoke review');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            };
+        });
+    });
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
                 }
             }
-            return cookieValue;
         }
-    function addReviewForm(reviewElement) {
-        // 创建表单的HTML结构
-        const formHtml = `
-            <div class="form-group">
-                <label for="score">评分 (1-10):</label>
-                <input type="number" class="form-control" id="score" name="score" min="1" max="10" required placeholder="评分范围: 1-10">
-                <small class="form-text text-muted">请为书籍打分，评分范围为 1 到 10。</small>
-            </div>
-            <div class="form-group">
-                <label for="comment">评论 (最多 300 字):</label>
-                <textarea class="form-control" id="comment" name="comment" rows="3" maxlength="300" placeholder="您的评论可以帮助其他读者了解这本书。"></textarea>
-                <small class="form-text text-muted">您的评论可以帮助其他读者了解这本书。评论字数限制为 300 字。</small>
-            </div>`;
-    
-        // 将表单HTML插入到指定的元素后面
-        reviewElement.insertAdjacentHTML('afterend', formHtml);
+        return cookieValue;
     }
     </script>
-</main>
 </body>
 </html>
 <style>

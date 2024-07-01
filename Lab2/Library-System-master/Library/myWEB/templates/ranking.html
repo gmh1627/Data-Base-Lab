@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="../../static/css/dashboard.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../static/zico/JS/zico.min.js"></script>
     <title> 读者书目状态查询 </title>
@@ -37,7 +37,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/dz_smztcx/">
+                            <a class="nav-link" href="/dz_smztcx/">
                                 <i class="zi zi_search"></i>
                                 <span>书目查询与评论</span>
                             </a>
@@ -61,7 +61,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/ranking/">
+                            <a class="nav-link active" href="/ranking/">
                                 <i class="zi zi_listSquare"></i>
                                 <span>排行榜</span>
                             </a>
@@ -73,57 +73,50 @@
     </div>
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
-            <h1 class="h2">书籍详细信息</h1>
+            <h1 class="h2">排行榜</h1>
         </div>
-        <div>
-            <h4>书名: {{ books_info.first.isbn.sm }}</h4>
-            <h4>ISBN: {{ books_info.first.isbn.isbn }}</h4>
-            <p>作者: {{ books_info.first.isbn.zz }}</p>
-            <p>出版社: {{ books_info.first.isbn.cbs }}</p>
-            <p>出版时间: {{ books_info.first.isbn.cbny }}</p>
-            <p>库存数量: {{ books_info.first.isbn.count }}</p>
-        </div>
-        
-        <h4>评分: {{ average_score }}</h4>
-        <h4>馆藏信息</h4>
+    
+        <h4>评分最高的十本书</h4>
         <table class="table container-fluid">
             <thead class="thead-light">
                 <tr class="table-primary">
-                    <th>图书id</th>
-                    <th>藏书位置</th>
-                    <th>状态</th>
+                    <th>书名</th>
+                    <th>ISBN</th>
+                    <th>平均评分</th>
                 </tr>
             </thead>
             <tbody>
-                {% for book in books_info %}
+                {% for book in top_rated_books %}
                 <tr>
-                    <td>{{ book.tsid }}</td>
-                    <td>{{ book.cfwz }}</td>
-                    <td>{{ book.zt }}</td>
+                    <td>{{ book.isbn__sm }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ book.average_score }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <h4>本书相关评论</h4>
+    
+        <h4>被借阅次数最多的十本书</h4>
         <table class="table container-fluid">
             <thead class="thead-light">
                 <tr class="table-primary">
-                    <th>评分</th>
-                    <th>评语</th>
-                    <th>评书时间</th>
+                    <th>书名</th>
+                    <th>ISBN</th>
+                    <th>借阅次数</th>
                 </tr>
             </thead>
             <tbody>
-                {% for review in reviews %}
+                {% for book in most_borrowed_books %}
                 <tr>
-                    <td>{{ review.score }}</td>
-                    <td>{{ review.comment }}</td>
-                    <td>{{ review.comment_time }}</td>
+                    <td>{{ book.tsid__isbn__sm }}</td>
+                    <td>{{ book.tsid__isbn }}</td>
+                    <td>{{ book.borrow_count }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </main>
+
 </body>
 </html>
 <style>

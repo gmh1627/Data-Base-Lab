@@ -89,7 +89,10 @@ request.session['xm']: 读者姓名 管理员姓名
 
 # =====================读者======================
 
-def dz_index(request):  # 读者首页
+from django.db.models import Count, Window, F
+from django.db.models.functions import Rank
+
+def dz_index(request):
     if request.session.get('login_type', None) != 'dz':
         return HttpResponseRedirect("/")
     context = dict()
@@ -97,6 +100,14 @@ def dz_index(request):  # 读者首页
     context['id'] = request.session.get('id', None)
     all_borrows = jsTable.objects.filter(dzid_id=request.session.get('id'))
     current_borrows = all_borrows.filter(ghsj=None)
+
+    # Calculate total number of users
+    total_users = jsTable.objects.values('dzid_id').distinct().count()
+
+    # Calculate the rank of the current user based on the total number of borrows
+    user_ranks = jsTable.objects.values('dzid_id').annotate(total_borrows=Count('id')).annotate(rank=Window(expression=Rank(), order_by=F('total_borrows').desc()))
+    current_user_rank = user_ranks.filter(dzid_id=request.session.get('id')).order_by('rank').first().get('rank')
+
     grzt = []
     for elem in all_borrows:
         if elem.tsid:
@@ -113,8 +124,10 @@ def dz_index(request):  # 读者首页
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context['page_obj'] = page_obj
-    context['current_borrow_count'] = len(current_borrows)  # 当前借阅数量
-    context['historical_borrow_count'] = len(all_borrows)  # 历史借阅数量
+    context['current_borrow_count'] = len(current_borrows)
+    context['historical_borrow_count'] = len(all_borrows)
+    context['user_rank'] = current_user_rank
+    context['total_users'] = total_users
     return render(request, 'dz_index.html', context=context)
 
 def current_borrows_view(request):  # 当前借阅书籍
@@ -231,25 +244,35 @@ def dz_smztcx(request):
         context['smzt'] = smzt
         return render(request, 'dz_smztcx.html', context=context)
 
+def check_review(request, isbn):
+    dzid = request.session.get('id', None)
+    hasReviewed = BookReview.objects.filter(isbn__isbn=isbn, dzid_id=dzid).exists()
+    if hasReviewed:
+        message = "You have already reviewed this book. To submit another review, please revoke your previous one first."
+    else:
+        message = ""
+    return JsonResponse({'hasReviewed': hasReviewed, 'message': message})
+
 @csrf_exempt
-def submit_review(request): # 提交评论
+def submit_review(request):
     if request.method == 'POST':
-        isbn_code = request.POST.get('isbn')
+        isbn = request.POST.get('isbn')
         score = request.POST.get('score')
         comment = request.POST.get('comment')
         dzid = request.session.get('id', None)
         
-        if not score:  # Example validation, adjust according to your needs
+        if not score:
             return JsonResponse({'message': 'Score is required.'}, status=400)
         
         try:
-            isbn_instance = smTable.objects.get(isbn=isbn_code)
+            isbn_instance = smTable.objects.get(isbn=isbn)
+            # Removed the check for existing review here
             BookReview.objects.create(isbn=isbn_instance, score=score, comment=comment, dzid_id=dzid)
             return JsonResponse({'message': 'Review submitted successfully!'})
         except smTable.DoesNotExist:
-            return JsonResponse({'message': 'ISBN code does not match any book.'}, status=404)
+            return JsonResponse({'message': 'No book matches the provided ISBN code.'}, status=404)
     return JsonResponse({'message': 'Invalid request'}, status=400)
-  
+
 def dz_js(request):  # 读者借书
     if request.session.get('login_type', None) != 'dz':
         return HttpResponseRedirect("/")
@@ -328,69 +351,6 @@ def dz_hs(request):  # 读者还书
         result.save()
         return render(request, 'dz_hs.html', context=context)
 
-# 读者评书
-'''
-def dz_review_book(request):
-    if request.session.get('login_type', None) != 'dz':
-        return HttpResponseRedirect("/")
-    context = dict()
-    context['xm'] = request.session.get('xm')
-    context['dzid'] = request.session.get('id', None)
-
-    # 定义一个内部函数来处理搜索逻辑，以便在GET和POST请求中重用
-    def handle_search():
-        book_name = request.GET.get('sm', '') if request.method == 'GET' else request.POST.get('sm', '')
-        books = smTable.objects.filter(book_name__icontains=book_name) if book_name else []
-        context['books'] = books
-        if request.method == 'GET':
-            if books:
-                context['msg'] = "请选择一本书并填写评分"
-            else:
-                context['msg'] = "未找到书籍"
-
-    # 执行搜索逻辑
-    handle_search()
-    if request.method == 'POST':  # 只有在POST请求时才处理评分逻辑
-        dzid = context['dzid']
-        isbn = request.POST.get('isbn')
-        score = request.POST.get('score')
-        comment = request.POST.get('comment', '')
-        #if not book_id or not score:
-        #context['msg'] = "请选择一本书并填写评分"
-            #handle_search()
-            #return render(request, 'dz_review_book.html', context=context)
-        book = smTable.objects.filter(isbn=isbn).first()
-        if not book:
-            context['msg'] = "未找到书籍"
-            #handle_search()
-            #return render(request, 'dz_review_book.html', context=context)
-        isbn = book.isbn
-        if BookReview.objects.filter(dzid_id=dzid, isbn=isbn).exists():
-            context['msg'] = "已评价过此书，如需修改请先撤销原评价"
-            #handle_search()
-            return render(request, 'my_reviews.html', context=context)
-        BookReview.objects.create(dzid_id=dzid, isbn=isbn, score=score, comment=comment)
-        context['msg'] = "评价成功"
-        # 评价成功后，也需要重新执行搜索逻辑
-        #handle_search()
-    # 无论是GET还是POST请求，都渲染同一页面并显示搜索结果
-    return render(request, 'dz_review_book.html', context=context)
-'''
-from django.db.models import Prefetch
-from itertools import groupby
-from .models import BookReview
-'''
-def get_grouped_reviews(dzid=None):
-    # Fetch reviews, ensuring related 'isbn' data is prefetched to minimize database hits
-    reviews = BookReview.objects.filter(dzid_id=dzid).order_by('isbn__isbn', '-comment_time').select_related('isbn')
-    
-    # Group reviews by a tuple of (ISBN number, Book Title)
-    grouped_reviews = {
-        (k.isbn, k.sm): list(g) 
-        for k, g in groupby(reviews, lambda x: (x.isbn.isbn, x.isbn.sm))
-    }
-    return grouped_reviews
-'''
 # 读者评价列表
 def my_reviews(request):
     dzid = request.session.get('id', None)
@@ -399,43 +359,73 @@ def my_reviews(request):
     context['dzid'] = dzid  # Get dzid from session
     if request.method == 'GET':
         # Fetch all reviews for the given dzid, including related book details
-        reviews = BookReview.objects.filter(dzid=dzid).select_related('isbn')
+        reviews = BookReview.objects.filter(dzid=dzid).select_related('isbn').order_by('comment_time')
         
         # Set up pagination
         paginator = Paginator(reviews, 10)  # Show 10 reviews per page
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         
+        # Calculate offset
+        offset = (page_obj.number - 1) * paginator.per_page
+        
         # Prepare reviews data for the template
         reviews_data = [{
+            'id': review.id,
             'isbn': review.isbn.isbn,
             'sm': review.isbn.sm,
             'score': review.score,
             'comment': review.comment,
-            'comment_time': review.comment_time
-        } for review in page_obj]
+            'comment_time': review.comment_time,
+            'index': i + 1 + offset  # Add an index key for each review
+        } for i, review in enumerate(page_obj)]
         
         context['reviews'] = reviews_data
         context['current_page'] = page_obj.number
         context['total_pages'] = paginator.num_pages
+        context['offset'] = offset  # Add offset to context
     
     return render(request, 'my_reviews.html', context=context)
 
-from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 import json
 
 @csrf_exempt
+@require_POST
 def revoke_review(request):
-    if request.method == 'POST':
+    try:
+        # Parse request body to get data
         data = json.loads(request.body)
         review_id = data.get('reviewId')
-        review = BookReview.objects.filter(id=review_id).first()
-        if review:
-            review.delete()
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'error': 'Review not found'}, status=404)
-    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+        # Attempt to retrieve and delete the review
+        review = BookReview.objects.get(id=review_id)
+        review.delete()
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        
+        return JsonResponse({'success': False, 'error': str(e)})
+
+def ranking(request): # 展示评分最高的十本书及其评分，被借阅次数最多的十本书及其被借次数
+    if request.session.get('login_type', None) != 'dz':
+        return HttpResponseRedirect("/")
+    
+    context = dict()
+    context['xm'] = request.session.get('xm', None)
+    context['id'] = request.session.get('id', None)
+    
+    # 获取评分最高的十本书及其评分，确保书籍有评分
+    top_rated_books = BookReview.objects.exclude(score__isnull=True).values('isbn__sm', 'isbn').annotate(average_score=Avg('score')).filter(average_score__gt=0).order_by('-average_score')[:10]
+    
+    # 获取被借阅次数最多的十本书及其被借次数，确保书籍被借阅过
+    most_borrowed_books = jsTable.objects.exclude(tsid__isnull=True).values('tsid__isbn__sm', 'tsid__isbn').annotate(borrow_count=Count('tsid')).filter(borrow_count__gt=0).order_by('-borrow_count')[:10]
+    
+    context['top_rated_books'] = top_rated_books
+    context['most_borrowed_books'] = most_borrowed_books
+    
+    return render(request, 'ranking.html', context=context)
 
 # =====================管理员======================
 
@@ -446,6 +436,25 @@ def gly_index(request):  # 管理员首页
     context['xm'] = request.session.get('xm')
     context['glyid'] = request.session.get('id') 
     return render(request, 'gly_index.html', context=context) 
+
+def book_details2(request, isbn): 
+    # Fetch book information from tsTable
+    books_info = tsTable.objects.filter(isbn=isbn)
+
+    # Calculate the average score from bookReview
+    average_score = BookReview.objects.filter(isbn=isbn).aggregate(Avg('score'))['score__avg'] or 0
+
+    # Fetch all reviews for the book
+    reviews = BookReview.objects.filter(isbn=isbn)
+
+    context = {
+        'xm': request.session.get('xm', None),
+        'id': request.session.get('id', None),
+        'books_info': books_info,
+        'average_score': average_score,
+        'reviews': reviews,
+    }
+    return render(request, 'book_details2.html', context)
 
 # 读者书目状态查询
 def gly_smztcx(request):  # 管理员书目状态查询
@@ -712,17 +721,21 @@ def gly_ck(request):  # 管理员出库
             sm.delete()
         else:
         # 更新smTable中的数量    
-            sm.kccs = tsTable.objects.filter(isbn=elem.isbn).count()
-            sm.bwjcs = tsTable.objects.filter(isbn=elem.isbn, zt='不外借').count()
-            sm.wjccs = tsTable.objects.filter(isbn=elem.isbn, zt='未借出').count()
-            sm.yjccs = tsTable.objects.filter(isbn=elem.isbn, zt='已借出').count()
+            sm.count = tsTable.objects.filter(isbn=elem.isbn).count()
+            #sm.bwjcs = tsTable.objects.filter(isbn=elem.isbn, zt='不外借').count()
+            #sm.wjccs = tsTable.objects.filter(isbn=elem.isbn, zt='未借出').count()
+            #sm.yjccs = tsTable.objects.filter(isbn=elem.isbn, zt='已借出').count()
             sm.save()
         return render(request, 'gly_ck.html', context=context)
     
 from django.db.models import Count
 
 def book_count_view(request):
-    book_counts = jsTable.objects.values('tsid__isbn__isbn', 'tsid__isbn__sm').annotate(total=Count('tsid')).order_by('-total')
+    # 使用annotate和Count来计算每本书的借阅次数，并使用filter排除借阅次数为0的记录
+    book_counts = jsTable.objects.values('tsid__isbn__isbn', 'tsid__isbn__sm')\
+        .annotate(total=Count('tsid'))\
+        .filter(total__gt=0)\
+        .order_by('-total')
     context = {
         'book_counts': book_counts,
         'glyid': request.session.get('id')

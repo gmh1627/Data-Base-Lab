@@ -140,7 +140,7 @@
                 <tbody>
                 {% for elem in smzt %}
                 <tr>
-                    <td nowrap="true"> {{ elem.ISBN }}</td>
+                    <td nowrap="true"><a href="{% url 'book_details2' elem.ISBN %}">{{ elem.ISBN }}</a></td>
                     <td nowrap="true"> {{ elem.sm }}</td>
                     <td nowrap="true"> {{ elem.zz }}</td>
                     <td nowrap="true"> {{ elem.cbs }}</td>

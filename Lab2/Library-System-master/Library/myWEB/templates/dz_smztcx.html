@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="../../static/css/dashboard.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../static/zico/JS/zico.min.js"></script>
     <title> 读者书目状态查询 </title>
@@ -58,6 +58,12 @@
                             <a class="nav-link" href="/my_reviews/">
                                 <i class="zi zi_commentalt"></i>
                                 <span>评书记录</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/ranking/">
+                                <i class="zi zi_listSquare"></i>
+                                <span>排行榜</span>
                             </a>
                         </li>
                     </ul>
@@ -145,94 +151,101 @@
                         <td> {{ elem.wjccs }} </td>
                         <td> {{ elem.yjccs }} </td>
                         <td>
-                            <button type="button" class="btn btn-primary review-book-btn" data-toggle="modal" data-target="#reviewModal" data-isbn="{{ elem.ISBN }}">评书</button>
+                            <button type="button" class="btn btn-primary review-book-btn" onclick="checkReview('{{ elem.ISBN }}')" data-isbn="{{ elem.ISBN }}">评书</button>
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
-            </table>
-            <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <!-- Added role="form" to ensure the form matches the JavaScript selector -->
-                  <form action="{% url 'dz_smztcx' %}" method="post" role="form">
-                    {% csrf_token %}
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="reviewModalLabel">书籍评价</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <input type="hidden" name="isbn" id="reviewIsbn" value="">
-                        <div class="form-group">
-                          <label for="score">评分 (1-10)</label>
-                          <input type="number" class="form-control" id="score" name="score" min="1" max="10" required>
-                        </div>
-                        <div class="form-group">
-                          <label for="comment">评语 (限100字)</label>
-                          <textarea class="form-control" id="comment" name="comment" rows="3" maxlength="100" required></textarea>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                        <button type="submit" class="btn btn-primary">提交评价</button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                  // Directly select the form within the #reviewModal modal
-                  var form = document.querySelector('#reviewModal form');
-                
-                  form.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Prevent the default form submission
-                
-                    var formData = new FormData(form);
-                
-                    // Asynchronously submit the form data
-                    fetch(form.action, {
-                      method: 'POST',
-                      body: formData,
-                      headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                      },
-                    })
-                    .then(response => {
-                      if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                      }
-                      return response.json();
-                    })
-                    .then(data => {
-                      // Update the page based on the response
-                      var messageDiv = document.createElement('div');
-                      if(data.success) {
-                        messageDiv.className = 'alert alert-success';
-                        messageDiv.textContent = '提交成功！';
-                      } else {
-                        messageDiv.className = 'alert alert-danger';
-                        messageDiv.textContent = '提交失败，请重试。';
-                      }
-                      // Ensure any previous messages are removed
-                      var existingMessage = form.querySelector('.alert');
-                      if (existingMessage) {
-                        form.removeChild(existingMessage);
-                      }
-                      form.prepend(messageDiv); // Add the message above the form
-                    })
-                    .catch(error => {
-                      console.error('Error:', error);
-                      alert('提交失败，请重试。');
-                    });
-                  });
-                });
-                </script>
+            </table>    
         {% endif %}
     {% endif %}
 </main>
+
+<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewModalLabel">书籍评价</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="reviewForm" action="{% url 'submit_review' %}" method="post"> <!-- 注意添加id="reviewForm" -->
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="isbn" id="reviewIsbn" value="">
+                    <div class="form-group">
+                        <label for="score" class="col-form-label">评分(1-10分):</label>
+                        <input type="number" class="form-control" id="score" name="score" min="1" max="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="comment" class="col-form-label">评论:</label>
+                        <textarea class="form-control" id="comment" name="comment" maxlength="100"></textarea>
+                        <small id="commentHelp" class="form-text text-muted">剩余字数: <span id="remainingChars">100</span></small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">提交评价</button>
+                </div>
+            </form>
+            <script>
+                function checkReview(isbn) {
+                    fetch(`/check_review/${isbn}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.hasReviewed) {
+                            alert("You have already reviewed this book. To submit another review, please revoke your previous one first.");
+                        } else {
+                            // Show the review modal if the user hasn't reviewed the book
+                            $('#reviewIsbn').val(isbn);
+                            console.log(data);
+                            $('#reviewModal').modal('show');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+                </script>
+               
+            <script>
+                // 当文档加载完毕时
+                $(document).ready(function() {
+                    // 监听评论输入框的输入事件
+                    $('#comment').on('input', function() {
+                        // 计算剩余字数
+                        var remaining = 100 - $(this).val().length;
+                        // 更新剩余字数提示
+                        $('#remainingChars').text(remaining);
+                    });
+                });
+            </script>
+            <script>
+            $(document).ready(function() {
+                $('#reviewForm').submit(function(e) {
+                    e.preventDefault(); // 阻止表单的默认提交行为
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'submit_review' %}",
+                        data: $(this).serialize(), // 将表单内容序列化为字符串
+                        success: function(response) {
+                            // 处理成功响应
+                            alert(response.message); // 显示消息
+                            // 显示返回按钮
+                            $('#returnButton').show();
+                        },
+                        error: function(xhr, status, error) {
+                            // 处理错误响应
+                            alert("An error occurred: " + xhr.status + " " + xhr.statusText);
+                        }
+                    });
+                });
+            });
+            </script>
+            <!-- 返回按钮 -->
+            <button id="returnButton" style="display:none;" onclick="window.location.href='{% url 'dz_smztcx' %}'">返回</button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
