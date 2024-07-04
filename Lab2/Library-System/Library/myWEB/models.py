@@ -24,7 +24,7 @@ class smTable(models.Model):  # Bibliographic information
     sm = models.CharField(max_length=50)  # Book title
     zz = models.CharField(max_length=50)  # Author
     cbs = models.CharField(max_length=50)  # Publisher
-    cbny = models.DateTimeField()  # Publication year and month
+    cbny = models.DateTimeField()  # Publication time
     count = models.IntegerField(default=0)  # Count of books
 
 class tsTable(models.Model):  # Book information

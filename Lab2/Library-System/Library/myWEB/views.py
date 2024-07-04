@@ -1,5 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
+from django.db.models import Count, Window, F, Avg
+from django.db.models.functions import Rank
+from django.views.decorators.http import require_POST
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 from django.contrib.auth.hashers import make_password, check_password  # 用户密码管理
 from django.utils import timezone  # django带时区管理的时间类
 from .models import dzTable, tsglyTable, smTable, tsTable, jsTable, BookReview # 引入数据库
@@ -89,10 +95,7 @@ request.session['xm']: 读者姓名 管理员姓名
 
 # =====================读者======================
 
-from django.db.models import Count, Window, F
-from django.db.models.functions import Rank
-
-def dz_index(request):
+def dz_index(request): # 读者首页
     if request.session.get('login_type', None) != 'dz':
         return HttpResponseRedirect("/")
     context = dict()
@@ -106,7 +109,13 @@ def dz_index(request):
 
     # Calculate the rank of the current user based on the total number of borrows
     user_ranks = jsTable.objects.values('dzid_id').annotate(total_borrows=Count('id')).annotate(rank=Window(expression=Rank(), order_by=F('total_borrows').desc()))
-    current_user_rank = user_ranks.filter(dzid_id=request.session.get('id')).order_by('rank').first().get('rank')
+    current_user_rank_obj = user_ranks.filter(dzid_id=request.session.get('id')).order_by('rank').first()
+
+    if current_user_rank_obj is not None:
+        current_user_rank = current_user_rank_obj.get('rank')
+    else:
+        current_user_rank = None
+
 
     grzt = []
     for elem in all_borrows:
@@ -155,17 +164,9 @@ def current_borrows_view(request):  # 当前借阅书籍
     context['current_borrow_count'] = len(current_borrows)  # 当前借阅数量
     return render(request, 'current_borrows.html', context=context)
 
-from django.shortcuts import render, get_object_or_404
-from django.db.models import Avg
-
-def book_details(request, isbn):
-    # Fetch book information from tsTable
+def book_details(request, isbn): # 读者页面书籍详情
     books_info = tsTable.objects.filter(isbn=isbn)
-
-    # Calculate the average score from bookReview
     average_score = BookReview.objects.filter(isbn=isbn).aggregate(Avg('score'))['score__avg'] or 0
-
-    # Fetch all reviews for the book
     reviews = BookReview.objects.filter(isbn=isbn)
 
     context = {
@@ -177,12 +178,7 @@ def book_details(request, isbn):
     }
     return render(request, 'book_details.html', context)
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.urls import reverse
-
-# 读者书目状态查询
-def dz_smztcx(request):
+def dz_smztcx(request): # 读者书目状态查询
     if request.session.get('login_type', None) != 'dz':
         return HttpResponseRedirect("/")
     context = dict()
@@ -244,7 +240,7 @@ def dz_smztcx(request):
         context['smzt'] = smzt
         return render(request, 'dz_smztcx.html', context=context)
 
-def check_review(request, isbn):
+def check_review(request, isbn): # 检查是否已经评论过
     dzid = request.session.get('id', None)
     hasReviewed = BookReview.objects.filter(isbn__isbn=isbn, dzid_id=dzid).exists()
     if hasReviewed:
@@ -254,7 +250,7 @@ def check_review(request, isbn):
     return JsonResponse({'hasReviewed': hasReviewed, 'message': message})
 
 @csrf_exempt
-def submit_review(request):
+def submit_review(request): # 提交评论
     if request.method == 'POST':
         isbn = request.POST.get('isbn')
         score = request.POST.get('score')
@@ -284,7 +280,7 @@ def dz_js(request):  # 读者借书
     else:
         context['isbn'] = isbn = request.POST.get('isbn')
         context['msg'] = "未知错误，请重试"
-        dzid = context['dzid']  # 获取读者 id，直接从会话中获取
+        dzid = context['dzid']
         if not isbn:
             context['msg'] = "请填写完整的ISBN号"
             return render(request, 'dz_js.html', context=context)
@@ -302,14 +298,14 @@ def dz_js(request):  # 读者借书
             return render(request, 'dz_js.html', context=context)
         result = result[0]
         result.zt = '已借出'
-        result.save()  # 修改图书状态
+        result.save()
         item = jsTable(
             dzid_id=dzid,
             tsid=result,
             jysj=timezone.now(),
             yhsj=timezone.now() + timezone.timedelta(days=60)# 借书期限60天
         )
-        item.save()  # 添加借书信息
+        item.save()
         context['msg'] = "借阅成功！（图书id：" + str(result.tsid) + "）"
         return render(request, 'dz_js.html', context=context)
 
@@ -351,14 +347,12 @@ def dz_hs(request):  # 读者还书
         result.save()
         return render(request, 'dz_hs.html', context=context)
 
-# 读者评价列表
-def my_reviews(request):
+def my_reviews(request): # 读者评书记录
     dzid = request.session.get('id', None)
     context = dict()
     context['xm'] = request.session.get('xm')  # Assuming 'xm' is the user's name or similar
     context['dzid'] = dzid  # Get dzid from session
     if request.method == 'GET':
-        # Fetch all reviews for the given dzid, including related book details
         reviews = BookReview.objects.filter(dzid=dzid).select_related('isbn').order_by('comment_time')
         
         # Set up pagination
@@ -369,7 +363,6 @@ def my_reviews(request):
         # Calculate offset
         offset = (page_obj.number - 1) * paginator.per_page
         
-        # Prepare reviews data for the template
         reviews_data = [{
             'id': review.id,
             'isbn': review.isbn.isbn,
@@ -387,19 +380,12 @@ def my_reviews(request):
     
     return render(request, 'my_reviews.html', context=context)
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
-import json
-
 @csrf_exempt
 @require_POST
-def revoke_review(request):
+def revoke_review(request): # 撤销评论
     try:
-        # Parse request body to get data
         data = json.loads(request.body)
         review_id = data.get('reviewId')
-        # Attempt to retrieve and delete the review
         review = BookReview.objects.get(id=review_id)
         review.delete()
         
@@ -437,14 +423,9 @@ def gly_index(request):  # 管理员首页
     context['glyid'] = request.session.get('id') 
     return render(request, 'gly_index.html', context=context) 
 
-def book_details2(request, isbn): 
-    # Fetch book information from tsTable
+def book_details2(request, isbn): # 管理员页面书籍详情
     books_info = tsTable.objects.filter(isbn=isbn)
-
-    # Calculate the average score from bookReview
     average_score = BookReview.objects.filter(isbn=isbn).aggregate(Avg('score'))['score__avg'] or 0
-
-    # Fetch all reviews for the book
     reviews = BookReview.objects.filter(isbn=isbn)
 
     context = {
@@ -456,7 +437,6 @@ def book_details2(request, isbn):
     }
     return render(request, 'book_details2.html', context)
 
-# 读者书目状态查询
 def gly_smztcx(request):  # 管理员书目状态查询
     if request.session.get('login_type', None) != 'gly':
         return HttpResponseRedirect("/")
@@ -525,7 +505,7 @@ def smzt_all(request):  # 所有书目状态查询
     context['all_books'] = smzt
     return render(request, 'smzt_all.html', context=context)
 
-def borrowed_books(request):# 所有借阅信息
+def borrowed_books(request): # 所有借阅信息
     if request.session.get('login_type', None) != 'gly':
         return HttpResponseRedirect("/")
     context = dict()
@@ -599,6 +579,7 @@ def gly_rk(request):  # 管理员入库
                     )
                     item.save()
             context['msg'] = "旧书入库成功！"
+            context['refresh_page'] = True
             book = smTable.objects.get(isbn=isbn)
             book.count = tsTable.objects.filter(isbn=book).count()
             book.save()
@@ -633,6 +614,7 @@ def gly_rk(request):  # 管理员入库
                     )
                     item.save()
             context['msg'] = "新书入库成功！"
+            context['refresh_page'] = True
             book = smTable.objects.get(isbn=isbn)
             book.count = tsTable.objects.filter(isbn=book).count()
             book.save()
@@ -722,16 +704,10 @@ def gly_ck(request):  # 管理员出库
         else:
         # 更新smTable中的数量    
             sm.count = tsTable.objects.filter(isbn=elem.isbn).count()
-            #sm.bwjcs = tsTable.objects.filter(isbn=elem.isbn, zt='不外借').count()
-            #sm.wjccs = tsTable.objects.filter(isbn=elem.isbn, zt='未借出').count()
-            #sm.yjccs = tsTable.objects.filter(isbn=elem.isbn, zt='已借出').count()
             sm.save()
         return render(request, 'gly_ck.html', context=context)
     
-from django.db.models import Count
-
-def book_count_view(request):
-    # 使用annotate和Count来计算每本书的借阅次数，并使用filter排除借阅次数为0的记录
+def book_count_view(request): # 书籍借阅次数统计
     book_counts = jsTable.objects.values('tsid__isbn__isbn', 'tsid__isbn__sm')\
         .annotate(total=Count('tsid'))\
         .filter(total__gt=0)\
@@ -742,7 +718,7 @@ def book_count_view(request):
     }
     return render(request, 'book_count.html', context)
 
-def reader_count_view(request):
+def reader_count_view(request): # 读者借阅次数统计
     reader_counts = jsTable.objects.values('dzid__dzid', 'dzid__xm').annotate(total=Count('dzid')).order_by('-total')
     context = {
         'reader_counts': reader_counts,

@@ -4,28 +4,21 @@
     <meta charset="UTF-8">
     <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="../../static/css/dashboard.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../static/zico/JS/zico.min.js"></script>
-    <script>
-        $(function () {
-            $('#alert').alert()
-        })
-    </script>
-    <title> 读者还书 </title>
+    <title> 读者书目状态查询 </title>
 </head>
 <body>
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
-        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ dzid }})</span>
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-family: 楷体; font-weight: bold;font-size: x-large;">图书管理系统</a>
+        <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ xm }} (ID: {{ id }})</span>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
                 <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
             </li>
         </ul>
     </nav>
-
     <div class="container-fluid">
         <div class="row">
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
@@ -56,7 +49,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/dz_hs/">
+                            <a class="nav-link" href="/dz_hs/">
                                 <i class="zi zi_book"></i>
                                 <span>还书</span>
                             </a>
@@ -68,7 +61,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/ranking/">
+                            <a class="nav-link active" href="/ranking/">
                                 <i class="zi zi_listSquare"></i>
                                 <span>排行榜</span>
                             </a>
@@ -78,43 +71,62 @@
             </nav>
         </div>
     </div>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
-                <h1 class="h2">读者还书</h1>
-            </div>
-            <form role="form" action="/dz_hs/" method="post">
-                {% csrf_token %}
-                <div class="form-group row">
-                    <label for="tsid" class="col-md-1 col-form-label"> 图书ID </label>
-                    <div class="col-sm-3">
-                        <input name="tsid" type="text" class="form-control" id="tsid" placeholder="" value="{{ tsid }}">
-                    </div>
-                </div>
-                <button class="btn btn-primary">还书</button>
-                <br><br>
-                {%if msg%}
-                <div class="alert alert-primary alert-dismissible fade show" role="alert" style="display: inline-block">
-                    {{ msg }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                {% endif %}
-            </form>
-        </main>
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom" style="font-family: 华文行楷; font-size: xx-large; color: #42408fe6;">
+            <h1 class="h2">排行榜</h1>
+        </div>
+    
+        <h4 style="font-family: 华文仿宋; font-weight: bold; font-size: x-large; color: #42408fe6;">评分最高的十本书</h4>
+        <table class="table container-fluid">
+            <thead class="thead-light">
+                <tr class="table-primary">
+                    <th>书名</th>
+                    <th>ISBN</th>
+                    <th>平均评分</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in top_rated_books %}
+                <tr>
+                    <td>{{ book.isbn__sm }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td style="font-weight: 600;">{{ book.average_score }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <h4 style="font-family: 华文仿宋; font-weight: bold; font-size: x-large; color: #42408fe6;">被借阅次数最多的十本书</h4>
+        <table class="table container-fluid">
+            <thead class="thead-light">
+                <tr class="table-primary">
+                    <th>书名</th>
+                    <th>ISBN</th>
+                    <th>借阅次数</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in most_borrowed_books %}
+                <tr>
+                    <td>{{ book.tsid__isbn__sm }}</td>
+                    <td>{{ book.tsid__isbn }}</td>
+                    <td style="font-weight: 600;">{{ book.borrow_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
 
-    </div>
-</div>
 </body>
 </html>
 <style>
-    body{
-        background-image:url("../../static/img/background-o.jpg");
+    body {
+        background-image: url("../../static/img/background-i.jpg");
         background-size: cover;
         width: 100%;
         height: 100%;
         position: absolute;
         background-repeat: no-repeat;
-        background-attachment:fixed;
+        background-attachment: fixed;
     }
 </style>
