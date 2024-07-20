@@ -53,7 +53,7 @@ class BookReview(models.Model):  # Book review
     comment_time = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ("dzid", "isbn", "comment_time")
+        unique_together = ("dzid", "isbn")
         
 class jsTable(models.Model):  # Borrowing information
     dzid = models.ForeignKey(dzTable, on_delete=models.PROTECT)  # Reader ID

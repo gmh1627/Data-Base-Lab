@@ -539,6 +539,7 @@ def gly_rk(request):  # 管理员入库
             context['msg'] = "入库后状态必须为流通室或阅览室"
             return render(request, 'gly_rk.html', context=context)
         result = smTable.objects.filter(isbn=isbn)
+        print(result)
         if result.exists():  # 旧书录入
             if sm:
                 result = result.filter(sm__contains=sm)
