@@ -82,8 +82,9 @@
                     <th scope="col">ISBN</th>
                     <th scope="col">书名</th>
                     <th scope="col">评分</th>
+                    <th scope="col">评语</th>
                     <th scope="col">评论时间</th>
-                    <th scope="col">评论</th>
+                   
                     <th scope="col">操作</th>
                 </tr>
             </thead>
@@ -94,8 +95,8 @@
                     <td><a href="{% url 'book_details' review.isbn %}">{{ review.isbn }}</a></td>
                         <td>{{ review.sm }}</td>
                         <td>{{ review.score }}</td>
-                        <td>{{ review.comment_time }}</td>
                         <td>{{ review.comment }}</td>
+                        <td>{{ review.comment_time }}</td>
                         <td><button class="btn btn-danger btn-sm revoke-btn" data-review-id="{{ review.id }}">撤回评论</button></td>
                     </tr>
                 {% endfor %}

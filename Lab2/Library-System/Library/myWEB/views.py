@@ -86,13 +86,6 @@ def logout_view(request):  # 读者、管理员退出登录
         request.session.flush()
     return HttpResponseRedirect("/")
 
-"""
-登录后的session:
-request.session['login_type']: 读者'dz'  管理员'gly'
-request.session['id']: 读者id  管理员工号 
-request.session['xm']: 读者姓名 管理员姓名
-"""
-
 # =====================读者======================
 
 def dz_index(request): # 读者首页
@@ -105,7 +98,7 @@ def dz_index(request): # 读者首页
     current_borrows = all_borrows.filter(ghsj=None)
 
     # Calculate total number of users
-    total_users = jsTable.objects.values('dzid_id').distinct().count()
+    total_users = dzTable.objects.values('dzid').distinct().count()
 
     # Calculate the rank of the current user based on the total number of borrows
     user_ranks = jsTable.objects.values('dzid_id').annotate(total_borrows=Count('id')).annotate(rank=Window(expression=Rank(), order_by=F('total_borrows').desc()))
@@ -114,8 +107,7 @@ def dz_index(request): # 读者首页
     if current_user_rank_obj is not None:
         current_user_rank = current_user_rank_obj.get('rank')
     else:
-        current_user_rank = None
-
+        current_user_rank = total_users
 
     grzt = []
     for elem in all_borrows:
