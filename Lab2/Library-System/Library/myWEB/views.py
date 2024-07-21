@@ -7,7 +7,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from django.contrib.auth.hashers import make_password, check_password  # 用户密码管理
-from django.utils import timezone  # django带时区管理的时间类
+from django.utils import timezone
 from .models import dzTable, tsglyTable, smTable, tsTable, jsTable, BookReview # 引入数据库
 from django.core.paginator import Paginator
 
@@ -19,7 +19,7 @@ def login_view(request):  # 读者、管理员用户登录
     if request.method == 'POST':
         context["username"] = username = request.POST.get("username")
         password = request.POST.get("password")
-        user_type = request.POST.get("user_type")  # 新增的字段
+        user_type = request.POST.get("user_type") 
         if not username:
             context["msg"] = "请输入用户名"
             return render(request, 'home.html', context=context)
@@ -224,7 +224,6 @@ def dz_smztcx(request): # 读者书目状态查询
                     'bwjcs': len(tsTable.objects.filter(isbn=elem.isbn, zt='不外借')),
                     'wjccs': len(tsTable.objects.filter(isbn=elem.isbn, zt='未借出')),
                     'yjccs': len(tsTable.objects.filter(isbn=elem.isbn, zt='已借出')),
-                    'yyycs': len(tsTable.objects.filter(isbn=elem.isbn, zt='已预约')),
                     'detail_url': detail_url,
                 }
             )

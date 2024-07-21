@@ -22,7 +22,7 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2}}{1}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3}数据库概念结构设计}{1}{section.3}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ER图\relax }}{1}{figure.caption.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}数据库逻辑结构设计}{1}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}数据库逻辑结构设计(models.py)}{1}{section.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}数据库表结构}{1}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}具体分析}{2}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}dzTable (读者表)}{2}{subsubsection.4.2.1}\protected@file@percent }
@@ -32,6 +32,37 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.5}BookReview (书评表)}{3}{subsubsection.4.2.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.6}jsTable (借书表)}{4}{subsubsection.4.2.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}总结}{4}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}}{4}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}}{4}{section.6}\protected@file@percent }
-\gdef \@abspage@last{5}
+\@writefile{toc}{\contentsline {section}{\numberline {5}数据库物理结构设计}{4}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}后端功能设计与实现(views.py)}{4}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}home 函数}{4}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}home 函数}{4}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}login\_view 函数}{5}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}register 函数}{5}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}logout\_view 函数}{6}{subsection.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}dz\_index 函数：读者首页}{6}{subsection.6.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.7}current\_borrows\_view 函数：当前借阅书籍}{6}{subsection.6.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.8}book\_details 函数：书籍详情}{7}{subsection.6.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.9}dz\_smztcx 函数：读者书目状态查询}{7}{subsection.6.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.10}check\_review 函数：检查是否已经评论过}{7}{subsection.6.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.11}submit\_review 函数：提交评论}{8}{subsection.6.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.12}dz\_js 函数：读者借书}{8}{subsection.6.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.13}dz\_hs 函数：读者还书}{9}{subsection.6.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.14}my\_reviews 函数：读者评书记录}{9}{subsection.6.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.15}revoke\_review 函数：撤销评论}{9}{subsection.6.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.16}ranking 函数：展示排名信息}{10}{subsection.6.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.17}gly\_index 函数：管理员首页}{10}{subsection.6.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.18}book\_details2 函数：管理员页面书籍详情}{10}{subsection.6.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.19}gly\_smztcx 函数：管理员书目状态查询}{10}{subsection.6.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.20}smzt\_all 函数：所有书目状态查询}{11}{subsection.6.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.21}borrowed\_books 函数：所有借阅信息}{11}{subsection.6.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.22}gly\_rk 函数：管理员入库}{11}{subsection.6.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.23}gly\_ck 函数：管理员出库}{12}{subsection.6.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.24}book\_count\_view 函数：书籍借阅次数统计}{12}{subsection.6.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.25}reader\_count\_view 函数：读者借阅次数统计}{13}{subsection.6.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}}{13}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}}{13}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}}{13}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}}{13}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}}{13}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}}{13}{section.12}\protected@file@percent }
+\gdef \@abspage@last{14}

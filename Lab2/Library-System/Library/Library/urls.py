@@ -32,7 +32,6 @@ urlpatterns = [
     path('submit_review/', views.submit_review, name='submit_review'), # 提交评论
     path('dz_js/', views.dz_js),  # 读者借书
     path('dz_hs/', views.dz_hs),  # 读者还书
-    #path('dz_review_book/', views.dz_review_book, name='dz_review_book'),  # 读者评书
     path('my_reviews/', views.my_reviews, name='my_reviews'),  # 所有评论
     path('revoke_review/', views.revoke_review, name='revoke_review'), # 撤销评论
     path('ranking/', views.ranking, name='ranking'),  # 评分和借阅量排行榜
