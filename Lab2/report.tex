@@ -175,8 +175,7 @@
 
                             
 	\section{后端功能设计与实现(views.py)}
-	\subsection{home 函数}
-	\subsection{home 函数}
+	\subsection{home 函数：主页}
 	\begin{enumerate}
         \item \textbf{功能：} home 函数的主要功能是渲染并返回主页模板，处理对网站主页的请求；
         \item \textbf{实现逻辑}：
@@ -187,7 +186,7 @@
         \end{enumerate}
     \end{enumerate}
     
-    \subsection{login\_view 函数}
+    \subsection{login\_view 函数：登录}
     \begin{enumerate}
         \item \textbf{功能：} login\_view 函数处理用户登录逻辑，支持两种用户类型：读者和管理员。根据用户类型和提供的凭证（用户名和密码），进行相应的身份验证，并根据验证结果重定向到不同的页面或返回错误信息；
         \item \textbf{实现逻辑}：
@@ -205,7 +204,7 @@
         \end{enumerate}
     \end{enumerate}
     在这个过程中，\texttt{context} 字典被用来传递模板变量（如错误消息），而 Django 的 session 机制被用来在登录成功后存储用户信息，以便于跨请求保持用户状态。
-    \subsection{register 函数}
+    \subsection{register 函数：读者注册}
 \begin{enumerate}
     \item \textbf{功能：} 此函数用于新用户注册账户；
     \item \textbf{实现逻辑}：
@@ -353,7 +352,7 @@
             \item 检查所选图书的状态是否为“未借出”；
             \item 如果所有图书已被借出，返回错误消息，说明无法借阅；
             \item 更新图书状态为“已借出”，并创建借书记录；
-            \item 返回成功消息，提示借阅成功，并显示图书ID。
+            \item 返回成功消息，提示借阅成功，并显示图书ID，借阅时间为60天，不支持续借。
         \end{enumerate}
     \end{enumerate}
 \end{enumerate}
@@ -559,13 +558,80 @@
         \item 渲染并返回 \texttt{reader\_count.html} 页面。
     \end{enumerate}
 \end{enumerate}
-	\section{}
-	\section{}
-	\section{}
-	\section{}
-	\section{}
-	\section{}
+	\section{一些bug及修改思路}
+	\subsection{管理员注册}
+    一开始管理员和读者注册的逻辑是一样的，但是经助教提醒，发现这样会导致信息的泄露。
+    助教建议我们在新管理员注册后需要得到老管理员的批准，但我们发现这样实现起来比较困难，
+    因此我们决定使用超级管理员总结在数据库中添加图书管理员的方式来实现管理员注册。
+    \subsection{views和templates的对应关系}
+    有几次views传入的参数不足，导致渲染模板时出现错误，但报错信息并不明显，导致花了很多时间来找错误。
+    \section{待完善的功能}
+    \begin{itemize}
+        \item \textbf{图书图片展示}：由于时间原因，我们没有在书籍详情页面实现图书图片的展示；
+        \item \textbf{图书分类和搜索}：在实际应用中，用户可能需要根据图书的分类或关键字进行搜索，这是一个可以增加系统实用性的功能；
+        \item \textbf{图书借阅提醒}：用户借阅图书后，系统可以通过邮件或短信提醒用户还书日期，这是一个可以提高系统友好性的功能，但涉及到其他较为复杂的操作，暂时没有完成；
+        \item \textbf{图书预约}：用户可以预约已被借出的图书，系统会在图书归还后通知该用户，且其他用户不能借阅被预约的书，这是一个可以提高系统服务质量的功能；
+        \item \textbf{图书续借}：用户可以对已借阅的图书进行续借操作，延长借阅时间；
+        \item \textbf{图书荐购}：用户可以向管理员推荐购买某本书，管理员可以根据用户的推荐进行购买决策；
+        \item \textbf{图书推荐}：根据用户的借阅历史和评分记录，系统可以推荐用户可能感兴趣的图书，这是一个可以提高系统个性化的功能；
+        \item \textbf{图书分类统计}：管理员可能需要查看每个分类的图书数量，以便更好地管理图书馆的藏书；
+        \item \textbf{图书借阅统计}：管理员可能需要查看每本书的借阅次数，以便更好地了解读者的阅读喜好；
+        \item \textbf{入库图书统计}：管理员可能需要查询自己入库的所有书籍。
+    \end{itemize} 
+    \section{总结}
+	\subsection{实验收获}
 
+	在本次实验中，我们成功设计并实现了一个图书馆管理系统的基本功能。通过此次实验，我们收获了以下几点：
 	
+	\begin{itemize}
+		\item \textbf{数据库设计与范式理论应用}：
+		\begin{itemize}
+			\item 通过具体实践，我们学会了如何将业务需求转化为数据库表结构，并且掌握了表之间关系的设计，包括一对一、一对多、多对多等关系；
+			\item 我们也通过对每个表的3NF、BCNF和4NF的分析，更加深刻地理解了数据库设计的范式理论，以及如何通过范式理论减少数据冗余和提高数据一致性。
+		\end{itemize}
 
+		
+		\item \textbf{Django ORM(Object-Relational Mapping)工具的使用}：
+		\begin{itemize}
+			\item 学习了如何使用Django的ORM来定义数据库模型，并且通过这些模型与数据库进行交互，简化了数据操作的复杂度。
+			\item 掌握了如何在Django中进行数据迁移，维护数据库表结构的变更。
+		\end{itemize}
+		
+		\item \textbf{团队合作}：
+		\begin{itemize}
+			\item 通过分工合作，培养了团队合作能力，提高了沟通和协调能力，确保了项目的顺利进行。
+		\end{itemize}
+        \item \textbf{持续学习}：
+        \begin{itemize}
+            \item 数据库技术在不断进步，新的设计理念和技术工具不断涌现。我们需要保持学习的态度，不断更新知识，以适应技术发展的需要。
+		\end{itemize}
+	\end{itemize}
+	
+	\subsection{一些问题和教训}
+	
+	\begin{itemize}
+		\item \textbf{需求分析不够全面}：
+		\begin{itemize}
+			\item 在初期的需求分析阶段，由于考虑不够全面，导致后期需要对数据库表结构进行多次调整。这提醒我们在进行系统设计前，需要进行更为详细和全面的需求分析。
+		\end{itemize}
+		
+		\item \textbf{表结构调整的复杂性}：
+		\begin{itemize}
+			\item 由于初始设计的一些缺陷，后期在对表结构进行调整时，涉及到的数据迁移和数据一致性问题较为复杂。这也提醒我们在设计数据库时，需要充分考虑未来可能的变化和扩展。
+		\end{itemize}
+		
+		\item \textbf{数据量和性能问题}：
+		\begin{itemize}
+			\item 数据库设计中的每一个细节都可能影响到系统的性能和稳定性，虽然当前系统数据量较少，但随着数据量的增加，某些查询的效率可能会下降。这提示我们在实际应用中，需要考虑性能优化的问题，如建立索引、优化查询等。
+		\end{itemize}
+		\item \textbf{测试不足}：
+		\begin{itemize}
+			\item 在功能实现后，对系统的测试可能不够全面，不能保证所有功能在所有情况下都不会出现问题。
+		\end{itemize}
+        \item \textbf{没写实验日志}：
+        \begin{itemize}
+			\item 由于是初次完成这种较大的项目，因此没有记录完成每部分内容的时间点以及遇到的问题和解决方案，导致后期写实验报告时有些内容忘记了。
+		\end{itemize}
+	\end{itemize}
+    
 \end{document}
